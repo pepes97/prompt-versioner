@@ -11,7 +11,7 @@ from prompt_versioner.web.app import create_app
 
 def main():
     print("=" * 80)
-    print("🚀 Starting Prompt Versioner Dashboard")
+    print("Starting Prompt Versioner Dashboard")
     print("=" * 80)
     
     # Initialize versioner
@@ -52,10 +52,10 @@ def main():
     app = create_app(pv)
     
     port = 5000
-    print(f"\n🌐 Dashboard running at: http://localhost:{port}")
-    print(f"📊 Database: {pv.storage.db_path}")
-    print(f"📝 Tracked prompts: {len(pv.list_prompts())}")
-    print("\n💡 Press Ctrl+C to stop\n")
+    print(f"\nDashboard running at: http://localhost:{port}")
+    print(f"Database: {pv.storage.db_path}")
+    print(f"Tracked prompts: {len(pv.list_prompts())}")
+    print("\nPress Ctrl+C to stop\n")
     print("=" * 80)
     
     app.run(host='0.0.0.0', port=port, debug=True)

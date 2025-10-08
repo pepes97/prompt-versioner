@@ -350,7 +350,7 @@ def dashboard(ctx: click.Context, port: int, host: str, project: str, db_path: s
         f"[cyan]Project:[/cyan] {project}\n"
         f"[cyan]Database:[/cyan] {db_path_obj or 'default location'}\n"
         f"[cyan]URL:[/cyan] http://localhost:{port}",
-        title="🚀 Starting Dashboard",
+        title="Starting Dashboard",
         border_style="green"
     ))
     
@@ -367,7 +367,7 @@ def dashboard(ctx: click.Context, port: int, host: str, project: str, db_path: s
     # Show stats
     prompts = pv.list_prompts()
     if prompts:
-        console.print(f"\n[green]📝 Tracked prompts:[/green] {len(prompts)}")
+        console.print(f"\n[green] Tracked prompts:[/green] {len(prompts)}")
         for prompt_name in prompts[:5]:  # Show first 5
             versions = pv.list_versions(prompt_name)
             console.print(f"  • {prompt_name}: {len(versions)} versions")
@@ -416,13 +416,13 @@ def dashboard_command(port: int, host: str, project: str, db_path: str) -> None:
         console.print(f"[yellow]No database found, will create new one[/yellow]")
     
     if not project:
-        project = Path.cwd().name  # Use current directory name
+        project = Path.cwd().name
     
     console.print(Panel(
         f"[cyan]Project:[/cyan] {project}\n"
         f"[cyan]Database:[/cyan] {db_path_obj or default_db_path}\n"
         f"[cyan]URL:[/cyan] http://localhost:{port}",
-        title="🚀 Prompt Versioner Dashboard",
+        title="Prompt Versioner Dashboard",
         border_style="green"
     ))
     
@@ -436,7 +436,7 @@ def dashboard_command(port: int, host: str, project: str, db_path: str) -> None:
     # Show stats
     prompts = pv.list_prompts()
     if prompts:
-        table = Table(title="📊 Current Prompts")
+        table = Table(title="Current Prompts")
         table.add_column("Name", style="cyan")
         table.add_column("Versions", style="magenta")
         table.add_column("Latest", style="green")
@@ -455,17 +455,17 @@ def dashboard_command(port: int, host: str, project: str, db_path: str) -> None:
         if len(prompts) > 10:
             console.print(f"\n[dim]... and {len(prompts) - 10} more prompts[/dim]")
     else:
-        console.print("\n[yellow]📝 No prompts tracked yet[/yellow]")
+        console.print("\n[yellow]No prompts tracked yet[/yellow]")
         console.print("[dim]Start using PromptVersioner in your code to see data here[/dim]\n")
     
-    console.print(f"\n[bold green]🌐 Dashboard: http://localhost:{port}[/bold green]")
+    console.print(f"\n[bold green]Dashboard: http://localhost:{port}[/bold green]")
     console.print("[dim]Press Ctrl+C to stop[/dim]\n")
     
     try:
         app = create_app(pv)
         app.run(host=host, port=port, debug=False)
     except KeyboardInterrupt:
-        console.print("\n\n[yellow]👋 Dashboard stopped[/yellow]")
+        console.print("\n\n[yellow]Dashboard stopped[/yellow]")
 
 if __name__ == '__main__':
     cli()
