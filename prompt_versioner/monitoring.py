@@ -101,7 +101,7 @@ class PerformanceMonitor:
             baseline_cost = baseline_metrics.get("avg_cost", 0)
             current_cost = current_metrics.get("avg_cost", 0)
             
-            if baseline_cost > 0:
+            if baseline_cost and baseline_cost > 0:
                 change = (current_cost - baseline_cost) / baseline_cost
                 
                 if change > thresholds["cost"]:
@@ -122,8 +122,8 @@ class PerformanceMonitor:
         if "latency" in thresholds:
             baseline_latency = baseline_metrics.get("avg_latency", 0)
             current_latency = current_metrics.get("avg_latency", 0)
-            
-            if baseline_latency > 0:
+
+            if baseline_latency and baseline_latency > 0:
                 change = (current_latency - baseline_latency) / baseline_latency
                 
                 if change > thresholds["latency"]:
@@ -144,8 +144,8 @@ class PerformanceMonitor:
         if "quality" in thresholds:
             baseline_quality = baseline_metrics.get("avg_quality", 0)
             current_quality = current_metrics.get("avg_quality", 0)
-            
-            if baseline_quality > 0:
+
+            if baseline_quality and baseline_quality > 0:
                 change = (current_quality - baseline_quality) / baseline_quality
                 
                 if change < thresholds["quality"]:  # Negative threshold for decrease

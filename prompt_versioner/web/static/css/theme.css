@@ -1,0 +1,57 @@
+/* Dark Mode (default) */
+body {
+    background: #0f172a;
+    color: #e2e8f0;
+}
+
+h1 { color: #38bdf8; }
+h2 { color: #94a3b8; }
+
+.loading { color: #94a3b8; }
+.empty-state { color: #64748b; }
+.empty-state h3 { color: #94a3b8; }
+
+/* Theme toggle button */
+.theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    transition: background 0.3s, border-color 0.3s;
+    z-index: 1000;
+}
+
+.theme-toggle:hover {
+    background: #334155;
+}
+
+/* Light Mode */
+body.light-mode {
+    background: #f8fafc;
+    color: #1e293b;
+}
+
+body.light-mode h1 { color: #0284c7; }
+body.light-mode h2 { color: #475569; }
+
+body.light-mode .loading { color: #64748b; }
+body.light-mode .empty-state { color: #94a3b8; }
+body.light-mode .empty-state h3 { color: #64748b; }
+
+body.light-mode .theme-toggle {
+    background: #e2e8f0;
+    border-color: #cbd5e1;
+}
+
+body.light-mode .theme-toggle:hover {
+    background: #cbd5e1;
+}

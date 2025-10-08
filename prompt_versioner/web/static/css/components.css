@@ -1,0 +1,100 @@
+/* Stats grid */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: #1e293b;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    transition: background 0.3s, border-color 0.3s;
+}
+
+.stat-label { 
+    color: #94a3b8; 
+    font-size: 0.875rem; 
+    margin-bottom: 0.5rem; 
+}
+
+.stat-value { 
+    font-size: 2rem; 
+    font-weight: bold; 
+    color: #38bdf8; 
+}
+
+.stat-sublabel { 
+    color: #64748b; 
+    font-size: 0.75rem; 
+    margin-top: 0.25rem; 
+}
+
+/* Badges */
+.model-badge {
+    display: inline-block;
+    background: #8b5cf6;
+    color: #fff;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+.diff-badge {
+    display: inline-block;
+    background: #f59e0b;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+/* Buttons */
+.btn {
+    background: #0ea5e9;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+.btn:hover { 
+    background: #0284c7; 
+}
+
+.btn-secondary {
+    background: #475569;
+}
+
+.btn-secondary:hover { 
+    background: #334155; 
+}
+
+/* Light mode overrides */
+body.light-mode .stat-card {
+    background: #ffffff;
+    border-color: #e2e8f0;
+}
+
+body.light-mode .stat-label { color: #64748b; }
+body.light-mode .stat-value { color: #0284c7; }
+body.light-mode .stat-sublabel { color: #94a3b8; }
+
+body.light-mode .btn-secondary {
+    background: #cbd5e1;
+    color: #1e293b;
+}
+
+body.light-mode .btn-secondary:hover {
+    background: #94a3b8;
+}
