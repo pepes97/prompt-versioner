@@ -27,8 +27,8 @@ mypy = "^1.7.1"
 types-pyyaml = "^6.0.12.20250915"
 
 [tool.poetry.scripts]
-pv = "prompt_versioner.cli:cli"
-prompt-dashboard = "prompt_versioner.cli:dashboard_command"
+pv = "prompt_versioner.cli.main_cli:main"
+prompt-dashboard = "prompt_versioner.cli.commands.dashboard:dashboard_standalone"
 
 [build-system]
 requires = ["poetry-core"]
