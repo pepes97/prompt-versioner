@@ -10,8 +10,8 @@
     transition: background 0.3s;
 }
 
-.metric-item { 
-    text-align: center; 
+.metric-item {
+    text-align: center;
 }
 
 .metric-label {
@@ -37,14 +37,14 @@ body.light-mode .metrics-grid {
     background: #f8fafc;
 }
 
-body.light-mode .metric-label { 
-    color: #94a3b8; 
+body.light-mode .metric-label {
+    color: #94a3b8;
 }
 
-body.light-mode .metric-value { 
-    color: #0284c7; 
+body.light-mode .metric-value {
+    color: #0284c7;
 }
 
-body.light-mode .metric-unit { 
-    color: #64748b; 
+body.light-mode .metric-unit {
+    color: #64748b;
 }

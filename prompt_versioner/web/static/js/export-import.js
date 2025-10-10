@@ -35,16 +35,16 @@ const ExportImport = {
     async import() {
         const fileInput = document.getElementById('import-file');
         const file = fileInput.files[0];
-        
+
         if (!file) return;
-        
+
         try {
             const result = await API.importPrompt(file);
             Utils.showNotification(
                 `Imported: ${result.imported} versions, Skipped: ${result.skipped}`,
                 'success'
             );
-            
+
             // Reload prompts list
             Prompts.load();
         } catch (error) {

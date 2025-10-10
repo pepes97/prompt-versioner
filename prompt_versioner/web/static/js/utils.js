@@ -19,7 +19,7 @@ const Utils = {
         if (!diffSegments || diffSegments.length === 0) {
             return '';
         }
-        
+
         return diffSegments.map(segment => {
             const text = this.escapeHtml(segment.text);
             if (segment.type === 'added') {
@@ -79,9 +79,9 @@ const Utils = {
             animation: slideIn 0.3s ease;
         `;
         notification.textContent = message;
-        
+
         document.body.appendChild(notification);
-        
+
         setTimeout(() => {
             notification.style.animation = 'slideOut 0.3s ease';
             setTimeout(() => notification.remove(), 300);

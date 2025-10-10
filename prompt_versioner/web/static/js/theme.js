@@ -20,7 +20,7 @@ const Theme = {
     toggle() {
         const body = document.body;
         const icon = document.getElementById('theme-icon');
-        
+
         if (body.classList.contains('light-mode')) {
             body.classList.remove('light-mode');
             icon.textContent = '🌙';

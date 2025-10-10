@@ -14,6 +14,9 @@ rich = "^13.7.0"
 pydantic = "^2.5.0"
 flask = "^3.0.0"
 pyaml = "^25.7.0"
+pre-commit = "^4.3.0"
+mypy = "^1.18.2"
+pyyaml = "^6.0.3"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.3"
@@ -21,9 +24,10 @@ pytest-cov = "^4.1.0"
 black = "^23.12.0"
 ruff = "^0.1.8"
 mypy = "^1.7.1"
+types-pyyaml = "^6.0.12.20250915"
 
 [tool.poetry.scripts]
-pv = "prompt_versioner.cli:cli" 
+pv = "prompt_versioner.cli:cli"
 prompt-dashboard = "prompt_versioner.cli:dashboard_command"
 
 [build-system]
@@ -40,6 +44,14 @@ target-version = "py311"
 
 [tool.mypy]
 python_version = "3.11"
-warn_return_any = true
+mypy_path = ["."]
+files = ["prompt_versioner/"]
 warn_unused_configs = true
-disallow_untyped_defs = true
+disallow_untyped_defs = true       # obbliga a tipizzare le funzioni
+disallow_incomplete_defs = true    # obbliga a specificare tutti i tipi negli argomenti
+no_implicit_optional = true        # evita Optional impliciti
+strict_equality = true             # controlla confronti tra tipi diversi
+check_untyped_defs = true          # analizza anche funzioni senza type hints
+ignore_missing_imports = true      # evita warning per librerie non tipizzate
+explicit_package_bases = true      # evita deduzioni ambigue del package base
+namespace_packages = true          # utile con src-layout senza __init__.py ai livelli alti

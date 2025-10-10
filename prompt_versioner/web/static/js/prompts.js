@@ -11,19 +11,19 @@ const Prompts = {
     async load() {
         const list = document.getElementById('prompt-list');
         list.innerHTML = '<div class="loading">Loading prompts...</div>';
-        
+
         try {
             const data = await API.getPrompts();
-            
+
             this.allData = data.prompts;
-            
+
             // Update stats
             document.getElementById('total-prompts').textContent = data.prompts.length;
             document.getElementById('total-versions').textContent = data.total_versions;
             document.getElementById('total-cost').textContent = data.total_cost?.toFixed(4) || '0.0000';
             document.getElementById('total-tokens').textContent = data.total_tokens?.toLocaleString() || '0';
             document.getElementById('total-calls').textContent = data.total_calls?.toLocaleString() || '0';
-            
+
             this.render(this.allData);
         } catch (error) {
             console.error('Error loading prompts:', error);
@@ -41,7 +41,7 @@ const Prompts = {
      */
     render(prompts) {
         const list = document.getElementById('prompt-list');
-        
+
         if (prompts.length === 0) {
             list.innerHTML = `
                 <div class="empty-state">
@@ -51,7 +51,7 @@ const Prompts = {
             `;
             return;
         }
-        
+
         list.innerHTML = prompts.map(p => `
             <div class="prompt-item">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -61,8 +61,8 @@ const Prompts = {
                             ${p.version_count} versions • Latest: ${p.latest_version}
                         </div>
                     </div>
-                    <button 
-                        class="btn btn-secondary" 
+                    <button
+                        class="btn btn-secondary"
                         style="padding: 0.25rem 0.75rem; font-size: 0.75rem;"
                         onclick="event.stopPropagation(); ExportImport.exportSingle('${p.name}')"
                     >
@@ -78,12 +78,12 @@ const Prompts = {
      */
     filter() {
         const searchTerm = document.getElementById('search-input').value.toLowerCase();
-        
-        const filtered = this.allData.filter(p => 
+
+        const filtered = this.allData.filter(p =>
             p.name.toLowerCase().includes(searchTerm) ||
             p.latest_version.toLowerCase().includes(searchTerm)
         );
-        
+
         this.render(filtered);
     },
 
@@ -93,12 +93,12 @@ const Prompts = {
     sort() {
         const sortBy = document.getElementById('sort-select').value;
         const searchTerm = document.getElementById('search-input').value.toLowerCase();
-        
-        let filtered = this.allData.filter(p => 
+
+        let filtered = this.allData.filter(p =>
             p.name.toLowerCase().includes(searchTerm) ||
             p.latest_version.toLowerCase().includes(searchTerm)
         );
-        
+
         switch(sortBy) {
             case 'name-asc':
                 filtered.sort((a, b) => a.name.localeCompare(b.name));
@@ -119,7 +119,7 @@ const Prompts = {
                 filtered.sort((a, b) => new Date(a.latest_timestamp) - new Date(b.latest_timestamp));
                 break;
         }
-        
+
         this.render(filtered);
     }
 };

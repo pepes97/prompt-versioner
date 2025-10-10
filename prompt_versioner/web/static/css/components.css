@@ -14,22 +14,22 @@
     transition: background 0.3s, border-color 0.3s;
 }
 
-.stat-label { 
-    color: #94a3b8; 
-    font-size: 0.875rem; 
-    margin-bottom: 0.5rem; 
+.stat-label {
+    color: #94a3b8;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
 }
 
-.stat-value { 
-    font-size: 2rem; 
-    font-weight: bold; 
-    color: #38bdf8; 
+.stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #38bdf8;
 }
 
-.stat-sublabel { 
-    color: #64748b; 
-    font-size: 0.75rem; 
-    margin-top: 0.25rem; 
+.stat-sublabel {
+    color: #64748b;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
 }
 
 /* Badges */
@@ -68,16 +68,16 @@
     transition: background 0.3s;
 }
 
-.btn:hover { 
-    background: #0284c7; 
+.btn:hover {
+    background: #0284c7;
 }
 
 .btn-secondary {
     background: #475569;
 }
 
-.btn-secondary:hover { 
-    background: #334155; 
+.btn-secondary:hover {
+    background: #334155;
 }
 
 /* Light mode overrides */

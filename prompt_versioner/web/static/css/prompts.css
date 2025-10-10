@@ -14,24 +14,24 @@
     transition: background 0.2s;
 }
 
-.prompt-item:hover { 
-    background: #334155; 
+.prompt-item:hover {
+    background: #334155;
 }
 
-.prompt-item:last-child { 
-    border-bottom: none; 
+.prompt-item:last-child {
+    border-bottom: none;
 }
 
-.prompt-name { 
-    font-size: 1.125rem; 
-    font-weight: 600; 
-    color: #38bdf8; 
+.prompt-name {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #38bdf8;
 }
 
-.prompt-meta { 
-    color: #94a3b8; 
-    font-size: 0.875rem; 
-    margin-top: 0.25rem; 
+.prompt-meta {
+    color: #94a3b8;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
 }
 
 /* Search and filter controls */
@@ -68,12 +68,12 @@ body.light-mode .prompt-item:hover {
     background: #f1f5f9;
 }
 
-body.light-mode .prompt-name { 
-    color: #0284c7; 
+body.light-mode .prompt-name {
+    color: #0284c7;
 }
 
-body.light-mode .prompt-meta { 
-    color: #64748b; 
+body.light-mode .prompt-meta {
+    color: #64748b;
 }
 
 body.light-mode #search-input,

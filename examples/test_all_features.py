@@ -3,25 +3,25 @@
 import sys
 from pathlib import Path
 import time
-import random
+import random  # nosec B311
 
 # Add src to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from prompt_versioner.core import PromptVersioner, VersionBump
 from prompt_versioner.testing import ABTest
-from prompt_versioner.monitoring import PerformanceMonitor
+from prompt_versioner.app import PerformanceMonitor
 
 
 def simulate_llm_call(prompt_data, model="claude-sonnet-4"):
     """Simulate an LLM call with metrics."""
-    time.sleep(random.uniform(0.05, 0.15))
+    time.sleep(random.uniform(0.05, 0.15))  # nosec B311
 
     input_tokens = len(prompt_data["system"].split()) * 1.3 + len(prompt_data["user"].split()) * 1.3
-    output_tokens = random.randint(50, 200)
-    latency_ms = random.uniform(200, 800)
-    quality_score = random.uniform(0.75, 0.95)
-    accuracy = random.uniform(0.80, 0.98)
+    output_tokens = random.randint(50, 200)  # nosec B311
+    latency_ms = random.uniform(200, 800)  # nosec B311
+    quality_score = random.uniform(0.75, 0.95)  # nosec B311
+    accuracy = random.uniform(0.80, 0.98)  # nosec B311
 
     return {
         "model_name": model,
@@ -37,7 +37,7 @@ def simulate_llm_call(prompt_data, model="claude-sonnet-4"):
     }
 
 
-def main():
+def main():  # nosec B311
     print("=" * 80)
     print("Testing Prompt Versioner - All Features")
     print("=" * 80)
@@ -61,10 +61,10 @@ def main():
     for i in range(10):
 
         input_tokens = len(v1["system_prompt"].split()) * 1.3 + len(v1["user_prompt"].split()) * 1.3
-        output_tokens = random.randint(50, 200)
-        latency_ms = random.uniform(200, 800)
-        quality_score = random.uniform(0.75, 0.95)
-        accuracy = random.uniform(0.80, 0.98)
+        output_tokens = random.randint(50, 200)  # nosec B311
+        latency_ms = random.uniform(200, 800)  # nosec B311
+        quality_score = random.uniform(0.75, 0.95)  # nosec B311
+        accuracy = random.uniform(0.80, 0.98)  # nosec B311
         pv.log_metrics(
             name="code_reviewer",
             version=v1["version"],
@@ -210,10 +210,10 @@ def main():
             name="summarizer",
             version=latest_sum["version"],
             model_name="gpt-4o",
-            input_tokens=random.randint(500, 1000),
-            output_tokens=random.randint(100, 200),
-            latency_ms=random.uniform(300, 600),
-            quality_score=random.uniform(0.85, 0.95),
+            input_tokens=random.randint(500, 1000),  # nosec B311
+            output_tokens=random.randint(100, 200),  # nosec B311
+            latency_ms=random.uniform(300, 600),  # nosec B311
+            quality_score=random.uniform(0.85, 0.95),  # nosec B311
             temperature=0.5,
             top_p=1.0,
             max_tokens=500,
@@ -242,15 +242,15 @@ def main():
             name="entity_extractor",
             version=latest_entity["version"],
             model_name="claude-sonnet-4",
-            input_tokens=random.randint(200, 500),
-            output_tokens=random.randint(50, 150),
-            latency_ms=random.uniform(250, 500),
-            quality_score=random.uniform(0.88, 0.96),
-            accuracy=random.uniform(0.85, 0.95),
+            input_tokens=random.randint(200, 500),  # nosec B311
+            output_tokens=random.randint(50, 150),  # nosec B311
+            latency_ms=random.uniform(250, 500),  # nosec B311
+            quality_score=random.uniform(0.88, 0.96),  # nosec B311
+            accuracy=random.uniform(0.85, 0.95),  # nosec B311
             temperature=0.3,
             top_p=0.9,
             max_tokens=800,
-            success=random.choice([True, True, True, False]),  # 75% success rate
+            success=random.choice([True, True, True, False]),  # nosec B311
         )
 
     print("   Created 3 prompts with metrics")
@@ -283,7 +283,7 @@ def main():
     print("\n" + "=" * 80)
     print("All Features Tested Successfully!")
     print("=" * 80)
-    print(f"\nDatabase: {pv.storage.db_path}")
+    print(f"\nDatabase: {pv.storage.db}")
     print("\nNext steps:")
     print("  1. Run dashboard: poetry run python run_dashboard.py")
     print("  2. Open: http://localhost:5000")

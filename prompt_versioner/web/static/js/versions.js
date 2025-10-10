@@ -12,10 +12,10 @@ const Versions = {
         this.currentPrompt = promptName;
         document.getElementById('version-title').textContent = `Versions of "${promptName}"`;
         document.getElementById('version-section').style.display = 'block';
-        
+
         const list = document.getElementById('version-list');
         list.innerHTML = '<div class="loading">Loading versions...</div>';
-        
+
         try {
             const versions = await API.getVersionsWithDiffs(promptName);
             this.render(versions);
@@ -30,7 +30,7 @@ const Versions = {
      */
     render(versions) {
         const list = document.getElementById('version-list');
-        
+
         list.innerHTML = versions.map(v => {
             const metricsHtml = this.renderMetrics(v.metrics_summary);
             const diffBadge = v.has_changes ? '<span class="diff-badge">Modified</span>' : '';
@@ -38,7 +38,7 @@ const Versions = {
             const annotationsHtml = this.renderAnnotations(v.annotations);
             const systemPromptHtml = Utils.renderDiff(v.system_diff);
             const userPromptHtml = Utils.renderDiff(v.user_diff);
-            
+
             return `
                 <div class="version-item">
                     <div class="version-header">
@@ -117,7 +117,7 @@ const Versions = {
                 <div class="annotation-time">${new Date(ann.timestamp).toLocaleString()}</div>
             </div>
         `).join('');
-        
+
         return `
             <div class="annotations-section">
                 <div class="annotations-header">

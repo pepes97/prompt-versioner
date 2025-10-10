@@ -12,8 +12,8 @@
     border-bottom: 1px solid #334155;
 }
 
-.version-item:last-child { 
-    border-bottom: none; 
+.version-item:last-child {
+    border-bottom: none;
 }
 
 .version-header {
@@ -32,9 +32,9 @@
     font-weight: 600;
 }
 
-.version-time { 
-    color: #64748b; 
-    font-size: 0.875rem; 
+.version-time {
+    color: #64748b;
+    font-size: 0.875rem;
 }
 
 /* Prompt content display */
@@ -91,8 +91,8 @@ body.light-mode .version-item {
     border-bottom-color: #e2e8f0;
 }
 
-body.light-mode .version-time { 
-    color: #94a3b8; 
+body.light-mode .version-time {
+    color: #94a3b8;
 }
 
 body.light-mode .prompt-content {
@@ -100,8 +100,8 @@ body.light-mode .prompt-content {
     color: #1e293b;
 }
 
-body.light-mode .prompt-label { 
-    color: #0284c7; 
+body.light-mode .prompt-label {
+    color: #0284c7;
 }
 
 body.light-mode .diff-added {
@@ -114,6 +114,6 @@ body.light-mode .diff-removed {
     color: #dc2626;
 }
 
-body.light-mode .diff-info { 
-    color: #64748b; 
+body.light-mode .diff-info {
+    color: #64748b;
 }
