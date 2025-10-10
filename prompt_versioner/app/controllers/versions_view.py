@@ -146,3 +146,17 @@ def get_diff(name: str) -> Any:
         return jsonify({"error": str(e)}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@versions_bp.route("/versions/<version>", methods=["DELETE"])
+def delete_version(name: str, version: str) -> Any:
+    """Delete a specific version of a prompt (and related data)."""
+    try:
+        versioner = current_app.versioner  # type: ignore[attr-defined]
+        deleted = versioner.delete_version(name, version)
+        if deleted:
+            return jsonify({"success": True, "message": f"Version {version} deleted."})
+        else:
+            return jsonify({"success": False, "error": "Version not found."}), 404
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500

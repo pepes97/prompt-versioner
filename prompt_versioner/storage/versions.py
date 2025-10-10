@@ -255,6 +255,34 @@ class VersionStorage:
 
             return True
 
+    def delete_prompt(self, name: str) -> bool:
+        """Delete a prompt and all its versions (and related data).
+
+        Args:
+            name: Prompt name
+
+        Returns:
+            True if deleted, False if not found
+        """
+        with self.db.get_connection() as conn:
+            # Get all version_ids for this prompt
+            cursor = conn.execute("SELECT id FROM prompt_versions WHERE name = ?", (name,))
+            version_ids = [row["id"] for row in cursor.fetchall()]
+
+            if not version_ids:
+                return False
+
+            # Delete all related data for all versions
+            for version_id in version_ids:
+                conn.execute("DELETE FROM prompt_metrics WHERE version_id = ?", (version_id,))
+                conn.execute("DELETE FROM annotations WHERE version_id = ?", (version_id,))
+                conn.execute("DELETE FROM version_tags WHERE version_id = ?", (version_id,))
+
+            # Delete all versions for this prompt
+            conn.execute("DELETE FROM prompt_versions WHERE name = ?", (name,))
+
+            return True
+
     def update_metadata(self, name: str, version: str, metadata: Dict[str, Any]) -> bool:
         """Update metadata for a version.
 

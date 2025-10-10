@@ -44,6 +44,9 @@ class PromptStorage:
     def delete_version(self, *args: Any, **kwargs: Any) -> bool:
         return self.versions.delete(*args, **kwargs)
 
+    def delete_prompt(self, *args: Any, **kwargs: Any) -> bool:
+        return self.versions.delete_prompt(*args, **kwargs)
+
     # Delegate metrics operations
     def save_metrics(self, *args: Any, **kwargs: Any) -> int:
         return self.metrics.save(*args, **kwargs)

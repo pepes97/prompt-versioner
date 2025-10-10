@@ -39,13 +39,22 @@ const Versions = {
             const systemPromptHtml = Utils.renderDiff(v.system_diff);
             const userPromptHtml = Utils.renderDiff(v.user_diff);
 
+            // Pulsante elimina versione (SVG icona cestino)
+            const deleteBtn = `
+                <button class="delete-version-btn" data-version="${v.version}" title="Elimina versione">
+                  <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align: middle;">
+                    <path d="M6.5 7.5V14.5M10 7.5V14.5M13.5 7.5V14.5M3 5.5H17M8.5 3.5H11.5C12.0523 3.5 12.5 3.94772 12.5 4.5V5.5H7.5V4.5C7.5 3.94772 7.94772 3.5 8.5 3.5ZM4.5 5.5V15.5C4.5 16.0523 4.94772 16.5 5.5 16.5H14.5C15.0523 16.5 15.5 16.0523 15.5 15.5V5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>`;
+
             return `
-                <div class="version-item">
+                <div class="version-item" data-version="${v.version}">
                     <div class="version-header">
                         <div>
                             <span class="version-tag">${v.version}</span>${modelBadge}${diffBadge}
                         </div>
                         <span class="version-time">${new Date(v.timestamp).toLocaleString()}</span>
+                        ${deleteBtn}
                     </div>
                     ${v.git_commit ? `<div class="prompt-meta">Git: ${v.git_commit}</div>` : ''}
                     ${v.has_changes ? `<div class="diff-info">📝 ${v.diff_summary}</div>` : `<div class="diff-info">🎉 ${v.diff_summary}</div>`}
@@ -62,6 +71,30 @@ const Versions = {
                 </div>
             `;
         }).join('');
+
+        // Handler per eliminazione versione
+        list.querySelectorAll('.delete-version-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const version = this.getAttribute('data-version');
+                const promptName = Versions.currentPrompt;
+                if (confirm(`Sei sicuro di voler eliminare la versione ${version}?`)) {
+                    fetch(`/api/prompts/${encodeURIComponent(promptName)}/versions/${encodeURIComponent(version)}`, {
+                        method: 'DELETE'
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Rimuovi la versione dalla UI
+                            this.closest('.version-item').remove();
+                            // Dopo eliminazione, ricarica l'intera pagina
+                            location.reload();
+                        } else {
+                            alert('Errore: ' + (data.error || 'Impossibile eliminare la versione'));
+                        }
+                    });
+                }
+            });
+        });
     },
 
     /**

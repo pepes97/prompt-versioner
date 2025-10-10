@@ -81,7 +81,64 @@
     font-style: italic;
 }
 
-/* Light mode */
+/* Delete version button */
+.delete-version-btn {
+    background: transparent;
+    border: none;
+    color: #ececec;
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-left: 1rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    transition: background 0.2s, color 0.2s;
+    outline: none;
+    vertical-align: middle;
+}
+
+.delete-version-btn:hover, .delete-version-btn:focus {
+    background: rgba(24, 18, 18, 0.12);
+    color: #ececec;
+}
+
+body.light-mode .delete-version-btn {
+    color: #dc2626;
+}
+
+body.light-mode .delete-version-btn:hover, body.light-mode .delete-version-btn:focus {
+    background: rgba(239, 68, 68, 0.10);
+    color: #b91c1c;
+}
+
+/* Delete prompt button */
+.delete-prompt-btn {
+    background: #475569;
+    border: none;
+    color: #ececec;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: background 0.2s, color 0.2s;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+}
+.delete-prompt-btn:hover, .delete-prompt-btn:focus {
+    background: #334155;
+    color: #ececec;
+}
+
+body.light-mode .delete-prompt-btn {
+    background: #cbd5e1;
+    color: #000000;
+}
+body.light-mode .delete-prompt-btn:hover, body.light-mode .delete-prompt-btn:focus {
+    background: #94a3b8;
+    color: #000000;
+}
+
 body.light-mode .version-list {
     background: #ffffff;
     border-color: #e2e8f0;

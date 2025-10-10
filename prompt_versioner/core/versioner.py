@@ -568,6 +568,29 @@ class PromptVersioner:
 
         return self.storage.get_annotations(v["id"])
 
+    def delete_version(self, name: str, version: str) -> bool:
+        """Delete a specific version of a prompt (and related data).
+
+        Args:
+            name: Prompt name
+            version: Version string
+
+        Returns:
+            True if deleted, False if not found
+        """
+        return self.storage.delete_version(name, version)
+
+    def delete_prompt(self, name: str) -> bool:
+        """Delete a prompt and all its versions (and related data).
+
+        Args:
+            name: Prompt name
+
+        Returns:
+            True if deleted, False if not found
+        """
+        return self.storage.delete_prompt(name)
+
     # Private helper methods
 
     def _extract_prompts(self, result: Any) -> tuple[str, str]:

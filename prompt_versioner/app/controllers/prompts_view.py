@@ -58,3 +58,19 @@ def get_ab_tests(name: str) -> Any:
         return jsonify(testable_versions)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@prompts_bp.route("/<name>", methods=["DELETE"])
+def delete_prompt(name: str) -> Any:
+    """Delete a prompt and all its versions (and related data)."""
+    try:
+        versioner = current_app.versioner  # type: ignore[attr-defined]
+        deleted = versioner.delete_prompt(name)
+        if deleted:
+            return jsonify(
+                {"success": True, "message": f"Prompt '{name}' and all its versions deleted."}
+            )
+        else:
+            return jsonify({"success": False, "error": "Prompt not found."}), 404
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
