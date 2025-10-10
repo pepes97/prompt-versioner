@@ -4,6 +4,181 @@
 
 const ABTesting = {
     /**
+     * Toggle A/B Testing section
+     */
+    toggle() {
+        const section = document.getElementById('ab-test-section');
+        const button = document.getElementById('ab-toggle-btn');
+
+        if (section.style.display === 'none') {
+            section.style.display = 'block';
+            button.textContent = '🧪 Hide A/B Testing';
+            button.classList.add('active');
+            this.loadPromptsForAB();
+        } else {
+            section.style.display = 'none';
+            button.textContent = '🧪 Enable A/B Testing';
+            button.classList.remove('active');
+        }
+    },
+
+    /**
+     * Load prompts for A/B testing (only those with 2+ versions)
+     */
+    async loadPromptsForAB() {
+        try {
+            const response = await fetch('/api/prompts');
+            const data = await response.json();
+
+            const promptSelect = document.getElementById('ab-prompt-select');
+            const versionASelect = document.getElementById('ab-version-a-select');
+            const versionBSelect = document.getElementById('ab-version-b-select');
+            const resultsDiv = document.getElementById('ab-test-results');
+
+            // Reset all selectors
+            promptSelect.innerHTML = '<option value="">Select prompt...</option>';
+            versionASelect.innerHTML = '<option value="">📊 Select Version A (baseline)...</option>';
+            versionBSelect.innerHTML = '<option value="">🆚 Select Version B (comparison)...</option>';
+
+            // Clear results
+            if (resultsDiv) {
+                resultsDiv.innerHTML = '';
+            }
+
+            if (data.prompts) {
+                // Filter prompts that have at least 2 versions
+                const promptsWithMultipleVersions = [];
+
+                for (const prompt of data.prompts) {
+                    try {
+                        const versionsResponse = await fetch(`/api/prompts/${prompt.name}/versions`);
+                        const versions = await versionsResponse.json();
+
+                        if (Array.isArray(versions) && versions.length >= 2) {
+                            promptsWithMultipleVersions.push(prompt);
+                        }
+                    } catch (error) {
+                        console.warn(`Error checking versions for prompt ${prompt.name}:`, error);
+                    }
+                }
+
+                // Add only prompts with multiple versions to the select
+                promptsWithMultipleVersions.forEach(prompt => {
+                    const option = document.createElement('option');
+                    option.value = prompt.name;
+                    option.textContent = prompt.name;
+                    promptSelect.appendChild(option);
+                });
+
+                // Show message if no prompts have multiple versions
+                if (promptsWithMultipleVersions.length === 0) {
+                    const option = document.createElement('option');
+                    option.value = "";
+                    option.textContent = "No prompts with 2+ versions available";
+                    option.disabled = true;
+                    promptSelect.appendChild(option);
+                }
+            }
+        } catch (error) {
+            console.error('Error loading prompts for A/B testing:', error);
+        }
+    },
+
+    /**
+     * Load versions for A/B testing when prompt is selected
+     */
+    async loadVersionsForAB() {
+        const promptSelect = document.getElementById('ab-prompt-select');
+        const selectedPrompt = promptSelect.value;
+
+        if (!selectedPrompt) return;
+
+        try {
+            const response = await fetch(`/api/prompts/${selectedPrompt}/versions`);
+            const versions = await response.json();
+
+            const versionASelect = document.getElementById('ab-version-a-select');
+            const versionBSelect = document.getElementById('ab-version-b-select');
+
+            // Clear version selects with clearer labels
+            versionASelect.innerHTML = '<option value="">📊 Select Version A (baseline)...</option>';
+            versionBSelect.innerHTML = '<option value="">🆚 Select Version B (comparison)...</option>';
+
+            if (Array.isArray(versions) && versions.length > 0) {
+                versions.forEach((version, index) => {
+                    const isLatest = index === 0;
+                    const model = version.model_config ?
+                        (typeof version.model_config === 'string' ?
+                            JSON.parse(version.model_config).model || 'Unknown' :
+                            version.model_config.model || 'Unknown')
+                        : 'Unknown';
+
+                    const versionLabel = `v${version.version} (${this.formatDate(version.timestamp || version.created_at)}) - ${model}${isLatest ? ' [LATEST]' : ''}`;
+
+                    const optionA = document.createElement('option');
+                    optionA.value = version.version;
+                    optionA.textContent = versionLabel;
+                    versionASelect.appendChild(optionA);
+
+                    const optionB = document.createElement('option');
+                    optionB.value = version.version;
+                    optionB.textContent = versionLabel;
+                    versionBSelect.appendChild(optionB);
+                });
+
+                // Auto-select latest as A and previous as B if available
+                if (versions.length >= 2) {
+                    versionASelect.value = versions[0].version;  // Latest
+                    versionBSelect.value = versions[1].version;  // Previous
+                }
+            }
+        } catch (error) {
+            console.error('Error loading versions for A/B testing:', error);
+        }
+    },
+
+    /**
+     * Run A/B test comparison
+     */
+    async runABTest() {
+        const promptName = document.getElementById('ab-prompt-select').value;
+        const versionA = document.getElementById('ab-version-a-select').value;
+        const versionB = document.getElementById('ab-version-b-select').value;
+        const resultsDiv = document.getElementById('ab-test-results');
+
+        if (!promptName || !versionA || !versionB) {
+            this.showError(resultsDiv, 'Missing selection', 'Please select a prompt and both versions for comparison.');
+            return;
+        }
+
+        if (versionA === versionB) {
+            this.showError(resultsDiv, 'Same version selected', 'Please select different versions for A and B.');
+            return;
+        }
+
+        try {
+            // Show loading state
+            this.showLoading(resultsDiv, 'Running A/B test comparison...');
+
+            // Fetch version data for both versions
+            const [versionAResponse, versionBResponse] = await Promise.all([
+                fetch(`/api/prompts/${promptName}/versions/${versionA}`),
+                fetch(`/api/prompts/${promptName}/versions/${versionB}`)
+            ]);
+
+            const versionAData = await versionAResponse.json();
+            const versionBData = await versionBResponse.json();
+
+            // Show A/B test results
+            this.showABResults(resultsDiv, versionA, versionB, versionAData, versionBData);
+
+        } catch (error) {
+            console.error('Error running A/B test:', error);
+            this.showError(resultsDiv, 'A/B test failed', 'Unable to run A/B test comparison.');
+        }
+    },
+
+    /**
      * Load A/B test options for a prompt
      */
     async loadOptions(promptName) {

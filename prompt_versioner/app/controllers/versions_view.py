@@ -59,8 +59,17 @@ def get_version_detail(name: str, version: str) -> Any:
         metrics_summary = versioner.storage.get_metrics_summary(v["id"])
         metrics_list = versioner.storage.get_metrics(v["id"])
 
+        # Get model name from metrics
+        model_name = None
+        if metrics_list:
+            model_names = [m.get("model_name") for m in metrics_list if m.get("model_name")]
+            if model_names:
+                # Use the most recent model or the most common one
+                model_name = model_names[-1]  # Get the last (most recent) model
+
         v["metrics_summary"] = metrics_summary
         v["metrics_history"] = metrics_list
+        v["model_name"] = model_name
 
         return jsonify(v)
     except Exception as e:

@@ -10,5 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load initial data
     Prompts.load();
-    Alerts.load();
+    // Non caricare gli alert automaticamente, solo quando l'utente li attiva
+    // Alerts.load();
 });

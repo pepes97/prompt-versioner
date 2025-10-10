@@ -12,7 +12,7 @@ from prompt_versioner.storage.schema import SCHEMA_DEFINITIONS, INDEXES
 class DatabaseManager:
     """Manages SQLite database connection and operations."""
 
-    def __init__(self, db_path: Optional[Path] | None = None):
+    def __init__(self, db_path: Optional[Path] = None):
         """Initialize database manager.
 
         Args:

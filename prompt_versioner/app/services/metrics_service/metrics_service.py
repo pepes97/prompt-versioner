@@ -140,7 +140,8 @@ class MetricsService:
             if metrics_list:
                 model_names = [m.get("model_name") for m in metrics_list if m.get("model_name")]
                 if model_names:
-                    model_name = model_names[0]
+                    # Take the last (most recent) model name instead of the first
+                    model_name = model_names[-1]
             v["model_name"] = model_name
 
             # Get annotations
