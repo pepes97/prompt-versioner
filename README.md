@@ -230,6 +230,9 @@ Launch the interactive web dashboard to visualize and manage your prompts:
 # Using the main CLI (auto-detects database in current directory)
 pv dashboard --port 5000 --host localhost
 
+# Using the standalone dashboard command
+prompt-dashboard --port 5000 --host localhost
+
 # Or run from Python
 poetry run python examples/run_dashboard.py
 
@@ -238,6 +241,9 @@ pv dashboard --db-path /path/to/your/database.sqlite --port 5000
 
 # With custom project name
 pv --project my-project dashboard --port 5000
+
+# Standalone command with custom options
+prompt-dashboard --port 8080 --project my-project --db-path /path/to/db.sqlite
 ```
 
 The dashboard provides:
