@@ -78,160 +78,269 @@
             </div>
         </div>
 
-        <!-- Streamlined Prompts Section -->
-        <section class="prompts-section">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <span class="section-icon">📝</span>
-                    Prompts
-                </h2>
-                <div class="section-actions">
-                    <button class="btn btn-icon" onclick="exportAll()" title="Export All">
-                        📦
-                    </button>
-                    <button class="btn btn-icon" onclick="document.getElementById('import-file').click()" title="Import">
-                        📥
-                    </button>
-                    <input type="file" id="import-file" accept=".json" style="display: none;" onchange="importPrompt()" />
-                </div>
-            </div>
+        <!-- Modern Tab Navigation -->
+        <div class="tab-navigation">
+            <button class="tab-btn active" data-tab="prompts" onclick="switchTab('prompts')">
+                <span class="tab-icon">📝</span>
+                <span class="tab-label">Prompts</span>
+            </button>
+            <button class="tab-btn" data-tab="ab-testing" onclick="switchTab('ab-testing')">
+                <span class="tab-icon">🧪</span>
+                <span class="tab-label">A/B Testing</span>
+            </button>
+            <button class="tab-btn" data-tab="compare" onclick="switchTab('compare')">
+                <span class="tab-icon">🆚</span>
+                <span class="tab-label">Compare</span>
+            </button>
+            <button class="tab-btn" data-tab="alerts" onclick="switchTab('alerts')">
+                <span class="tab-icon">⚠️</span>
+                <span class="tab-label">Alerts</span>
+                <span class="tab-badge" id="alerts-badge" style="display: none;">0</span>
+            </button>
+        </div>
 
-            <!-- Minimal Search Bar -->
-            <div class="search-bar">
-                <input
-                    type="text"
-                    id="search-input"
-                    placeholder="Search prompts..."
-                    oninput="filterPrompts()"
-                    class="search-input-minimal"
-                />
-                <select id="sort-select" onchange="sortPrompts()" class="sort-select-minimal">
-                    <option value="name-asc">A-Z</option>
-                    <option value="name-desc">Z-A</option>
-                    <option value="date-desc">Recent</option>
-                    <option value="versions-desc">Most versions</option>
-                </select>
-            </div>
+        <!-- Tab Content Container -->
+        <div class="tab-content-container">
 
-            <!-- Two Column Layout -->
-            <div class="prompts-layout">
-                <!-- Left: Prompt List -->
-                <div class="prompts-sidebar">
-                    <div class="prompt-list-minimal" id="prompt-list">
-                        <div class="loading">Loading...</div>
+            <!-- Prompts Tab Content -->
+            <div class="tab-content active" id="tab-prompts">
+                <section class="prompts-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <span class="section-icon">📝</span>
+                            Prompts
+                        </h2>
+                        <div class="section-actions">
+                            <button class="btn btn-icon" onclick="exportAll()" title="Export All">
+                                📦
+                            </button>
+                            <!-- <button class="btn btn-icon" onclick="document.getElementById('import-file').click()" title="Import">
+                                📥
+                            </button> -->
+                            <input type="file" id="import-file" accept=".json" style="display: none;" onchange="importPrompt()" />
+                        </div>
                     </div>
-                </div>
+                    <p class="section-description">Manage and organize your prompt templates with version control</p>
 
-                <!-- Right: Version Details -->
-                <div class="versions-panel" id="version-section">
-                    <div class="versions-placeholder">
-                        <div class="placeholder-icon">📂</div>
-                        <h3>Select a prompt</h3>
-                        <p>Choose a prompt from the left to view its versions</p>
+                    <!-- Minimal Search Bar -->
+                    <div class="search-bar">
+                        <input
+                            type="text"
+                            id="search-input"
+                            placeholder="Search prompts..."
+                            oninput="filterPrompts()"
+                            class="search-input-minimal"
+                        />
+                        <select id="sort-select" onchange="sortPrompts()" class="sort-select-minimal">
+                            <option value="name-asc">A-Z</option>
+                            <option value="name-desc">Z-A</option>
+                            <option value="date-desc">Recent</option>
+                            <option value="versions-desc">Most versions</option>
+                        </select>
                     </div>
-                </div>
+
+                    <!-- Two Column Layout -->
+                    <div class="prompts-layout">
+                        <!-- Left: Prompt List -->
+                        <div class="prompts-sidebar">
+                            <div class="prompt-list-minimal" id="prompt-list">
+                                <div class="loading">Loading...</div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Version Details -->
+                        <div class="versions-panel" id="version-section">
+                            <div class="versions-placeholder">
+                                <div class="placeholder-icon">📂</div>
+                                <h3>Select a prompt</h3>
+                                <p>Choose a prompt from the left to view its versions</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
 
-            <!-- Advanced Features Toggles -->
-            <div class="advanced-controls" style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap;">
-                <button class="btn btn-secondary" onclick="toggleABTesting()" id="ab-toggle-btn">
-                    🧪 Enable A/B Testing
-                </button>
-                <button class="btn btn-secondary" onclick="DiffComparison.toggleVersionComparison()" id="diff-toggle-btn">
-                    🔄 Compare Versions
-                </button>
-                <button class="btn btn-secondary" onclick="toggleAlerts()" id="alerts-toggle-btn">
-                    ⚠️ Show Alerts
-                </button>
-            </div>
-        </section>
+            <!-- A/B Testing Tab Content -->
+            <div class="tab-content" id="tab-ab-testing">
+                <section class="ab-testing-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <span class="section-icon">🧪</span>
+                            A/B Testing Comparison
+                        </h2>
+                        <div class="section-actions">
+                            <button class="btn btn-primary" onclick="ABTesting.createNewTest()" title="Create New Test">
+                                ➕ New Test
+                            </button>
+                        </div>
+                    </div>
+                    <p class="section-description">Compare different prompt versions to measure performance improvements</p>
 
-        <!-- Version Comparison Section -->
-        <div id="diff-section" style="display: none; margin-top: 2rem;">
-            <h2 style="color: #3b82f6; display: flex; align-items: center; gap: 0.5rem;">
-                🔄 Version Comparison
-                <button onclick="DiffComparison.toggleVersionComparison()" style="background: #ef4444; color: white; border: none; border-radius: 4px; padding: 0.25rem 0.75rem; font-size: 0.875rem; cursor: pointer;">
-                    ✕ Close
-                </button>
-            </h2>
+                    <!-- Quick Test Setup -->
+                    <div class="ab-test-setup">
+                        <div class="setup-row">
+                            <div class="setup-field">
+                                <label>Prompt</label>
+                                <select id="ab-prompt-select" onchange="ABTesting.loadVersionsForAB()">
+                                    <option value="">Select prompt...</option>
+                                </select>
+                            </div>
+                            <div class="setup-field">
+                                <label>📊 Baseline Version</label>
+                                <select id="ab-version-a-select">
+                                    <option value="">Select baseline...</option>
+                                </select>
+                            </div>
+                            <div class="setup-vs">vs</div>
+                            <div class="setup-field">
+                                <label>🆚 Test Version</label>
+                                <select id="ab-version-b-select">
+                                    <option value="">Select test version...</option>
+                                </select>
+                            </div>
+                            <div class="setup-field">
+                                <label>Metric</label>
+                                <select id="ab-metric-select">
+                                    <option value="quality_score">Quality Score</option>
+                                    <option value="cost">Cost (USD)</option>
+                                    <option value="latency">Latency (ms)</option>
+                                    <option value="accuracy">Accuracy</option>
+                                </select>
+                            </div>
+                            <div class="setup-action">
+                                <button class="btn btn-primary" onclick="ABTesting.runABTest()">
+                                    🚀 Run Test
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
-            <div style="display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; align-items: center;">
-                <div>
-                    <label style="display: block; margin-bottom: 0.25rem; color: #94a3b8; font-size: 0.875rem;">Prompt:</label>
-                    <select id="diff-prompt-select" onchange="loadVersionsForDiff()" style="padding: 0.5rem; border: 1px solid #334155; border-radius: 4px; background: #1e293b; color: #f1f5f9;">
-                        <option value="">Select prompt...</option>
-                    </select>
-                </div>
-                <div>
-                    <label style="display: block; margin-bottom: 0.25rem; color: #94a3b8; font-size: 0.875rem;">📊 BASELINE version (old)</label>
-                    <select id="diff-version-a-select" style="padding: 0.5rem; border: 1px solid #334155; border-radius: 4px; background: #1e293b; color: #f1f5f9;">
-                        <option value="">Select BASELINE version (old)</option>
-                    </select>
-                </div>
-                <div>
-                    <label style="display: block; margin-bottom: 0.25rem; color: #94a3b8; font-size: 0.875rem;">🆚 COMPARISON version (new)</label>
-                    <select id="diff-version-b-select" style="padding: 0.5rem; border: 1px solid #334155; border-radius: 4px; background: #1e293b; color: #f1f5f9;">
-                        <option value="">Select COMPARISON version (new)</option>
-                    </select>
-                </div>
-                <div style="margin-top: 1.5rem;">
-                    <button onclick="DiffComparison.compareDiffVersions()" style="padding: 0.5rem 1.5rem; background: #3b82f6; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">
-                        Compare
-                    </button>
-                </div>
-            </div>
-
-            <div id="diff-results"></div>
-        </div>
-
-        <!-- A/B Test Section -->
-        <div id="ab-test-section" style="display: none; margin-top: 2rem;">
-            <h2>🧪 A/B Test Comparison</h2>
-
-            <div style="display: flex; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap;">
-                <!-- Prompt Selection -->
-                <select id="ab-prompt-select" onchange="ABTesting.loadVersionsForAB()" style="padding: 0.5rem; border: 1px solid #334155; border-radius: 4px; background: #1e293b; color: #f1f5f9;">
-                    <option value="">Select prompt...</option>
-                </select>
-
-                <!-- Version A Selection -->
-                <select id="ab-version-a-select" style="padding: 0.5rem; border: 1px solid #334155; border-radius: 4px; background: #1e293b; color: #f1f5f9;">
-                    <option value="">📊 Select Version A (baseline)...</option>
-                </select>
-
-                <span style="align-self: center; color: #94a3b8;">vs</span>
-
-                <!-- Version B Selection -->
-                <select id="ab-version-b-select" style="padding: 0.5rem; border: 1px solid #334155; border-radius: 4px; background: #1e293b; color: #f1f5f9;">
-                    <option value="">🆚 Select Version B (comparison)...</option>
-                </select>
-
-                <!-- Metric Selection -->
-                <select id="ab-metric-select" style="padding: 0.5rem; border: 1px solid #334155; border-radius: 4px; background: #1e293b; color: #f1f5f9;">
-                    <option value="quality_score">Quality Score</option>
-                    <option value="cost">Cost (USD)</option>
-                    <option value="latency">Latency (ms)</option>
-                    <option value="accuracy">Accuracy</option>
-                </select>
-
-                <button onclick="ABTesting.runABTest()" style="padding: 0.5rem 1.5rem; background: #0ea5e9; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">
-                    Compare
-                </button>
+                    <!-- A/B Test Results -->
+                    <div id="ab-test-results" class="ab-results-container">
+                        <div class="empty-state">
+                            <div class="empty-content">
+                                <div class="empty-icon">🧪</div>
+                                <h3>Ready for A/B Testing</h3>
+                                <p>Select prompts and versions above to run comparison tests</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
 
-            <div id="ab-test-results"></div>
-        </div>
+            <!-- Compare Versions Tab Content -->
+            <div class="tab-content" id="tab-compare">
+                <section class="compare-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <span class="section-icon">🆚</span>
+                            Version Comparison
+                        </h2>
+                        <div class="section-actions">
+                            <button class="btn btn-secondary" onclick="DiffComparison.clearComparison()" title="Clear Selection">
+                                🗑️ Clear
+                            </button>
+                        </div>
+                    </div>
+                    <p class="section-description">Analyze differences between prompt versions with detailed change tracking</p>
 
-        <!-- Version Section -->
-        <div id="version-section" style="display: none;">
-            <h2 id="version-title">Versions</h2>
-            <div class="version-list" id="version-list"></div>
-        </div>
+                    <!-- Quick Compare Setup -->
+                    <div class="compare-setup">
+                        <div class="setup-row">
+                            <div class="setup-field">
+                                <label>Prompt</label>
+                                <select id="diff-prompt-select" onchange="loadVersionsForDiff()">
+                                    <option value="">Select prompt...</option>
+                                </select>
+                            </div>
+                            <div class="setup-field">
+                                <label>📊 Baseline Version</label>
+                                <select id="diff-version-a-select">
+                                    <option value="">Select baseline...</option>
+                                </select>
+                            </div>
+                            <div class="setup-vs">vs</div>
+                            <div class="setup-field">
+                                <label>🆚 Comparison Version</label>
+                                <select id="diff-version-b-select">
+                                    <option value="">Select comparison...</option>
+                                </select>
+                            </div>
+                            <div class="setup-action">
+                                <button class="btn btn-primary" onclick="DiffComparison.compareDiffVersions()">
+                                    🔍 Compare
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
-        <!-- Alerts Section -->
-        <div class="alerts-section" id="alerts-section" style="display: none;">
-            <h2>⚠️ Performance Alerts</h2>
-            <div id="alerts-container"></div>
+                    <!-- Comparison Results -->
+                    <div id="diff-results" class="diff-results-container">
+                        <div class="empty-state">
+                            <div class="empty-content">
+                                <div class="empty-icon">🆚</div>
+                                <h3>Ready for Comparison</h3>
+                                <p>Select two versions above to see detailed differences</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Alerts Tab Content -->
+            <div class="tab-content" id="tab-alerts">
+                <section class="alerts-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <span class="section-icon">⚠️</span>
+                            Performance Alerts
+                        </h2>
+                        <div class="section-actions">
+                            <button class="btn btn-secondary" onclick="refreshAlerts()" title="Refresh Alerts">
+                                🔄 Refresh
+                            </button>
+                            <button class="btn btn-secondary" onclick="clearAllAlerts()" title="Clear All">
+                                🗑️ Clear All
+                            </button>
+                        </div>
+                    </div>
+                    <p class="section-description">Monitor prompt performance metrics and receive automated alerts for issues</p>
+
+                    <!-- Alert Filters -->
+                    <div class="alert-filters">
+                        <div class="filter-group">
+                            <label>Severity</label>
+                            <select id="alert-severity-filter">
+                                <option value="all">All Severities</option>
+                                <option value="critical">Critical</option>
+                                <option value="warning">Warning</option>
+                                <option value="info">Info</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label>Type</label>
+                            <select id="alert-type-filter">
+                                <option value="all">All Types</option>
+                                <option value="performance">Performance</option>
+                                <option value="cost">Cost</option>
+                                <option value="quality">Quality</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Alerts Container -->
+                    <div id="alerts-container" class="alerts-container">
+                        <div class="empty-state">
+                            <div class="empty-content">
+                                <div class="empty-icon">✅</div>
+                                <h3>No Active Alerts</h3>
+                                <p>All systems are running normally</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
         </div>
     </div>
 
@@ -257,6 +366,9 @@
                 <div class="version-actions">
                     <button class="btn-icon btn-icon-small view-details-btn" title="Visualizza dettagli">
                         👁️
+                    </button>
+                    <button class="btn-icon btn-icon-small export-version-btn" title="Esporta versione">
+                        📦
                     </button>
                     <button class="btn-icon btn-icon-small delete-version-btn" title="Elimina versione">
                         🗑️
@@ -358,11 +470,11 @@
     <template id="metrics-row-template">
         <div class="version-metrics">
             <div class="metrics-row">
-                <span class="metric-item metric-calls">📞 <span class="value"></span> calls</span>
-                <span class="metric-item metric-tokens">🔤 <span class="value"></span> avg tokens</span>
+                <span class="metric-item metric-calls">📞 <span class="value"></span>&nbsp;calls</span>
+                <span class="metric-item metric-tokens">🔤 <span class="value"></span>&nbsp;avg tokens</span>
                 <span class="metric-item metric-cost">💰 €<span class="value"></span></span>
-                <span class="metric-item metric-latency">⚡ <span class="value"></span>ms</span>
-                <span class="metric-item metric-quality">⭐ <span class="value"></span> quality</span>
+                <span class="metric-item metric-latency">⚡ <span class="value"></span>&nbsp;ms</span>
+                <span class="metric-item metric-quality">⭐ <span class="value"></span>&nbsp;quality</span>
                 <span class="metric-item metric-success">✅ <span class="value"></span>% success</span>
             </div>
         </div>
@@ -503,7 +615,7 @@
                     </div>
 
                     <div class="metric-comparison-item">
-                        <div class="metric-comparison-label">📥 Avg Input Tokens</div>
+                        <div class="metric-comparison-label">🔤 Avg Input Tokens</div>
                         <div class="metric-comparison-values">
                             <span class="baseline-value input-tokens-baseline">--</span>
                             <span class="comparison-arrow">→</span>
@@ -513,7 +625,7 @@
                     </div>
 
                     <div class="metric-comparison-item">
-                        <div class="metric-comparison-label">📤 Avg Output Tokens</div>
+                        <div class="metric-comparison-label">🔤 Avg Output Tokens</div>
                         <div class="metric-comparison-values">
                             <span class="baseline-value output-tokens-baseline">--</span>
                             <span class="comparison-arrow">→</span>
@@ -646,6 +758,7 @@
     <script src="{{ url_for('static', filename='js/alerts.js') }}"></script>
     <script src="{{ url_for('static', filename='js/export-import.js') }}"></script>
     <script src="{{ url_for('static', filename='js/diff-comparison.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/tabs.js') }}"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

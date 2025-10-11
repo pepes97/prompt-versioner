@@ -330,6 +330,9 @@ const PromptsLayout = {
         const viewBtn = clone.querySelector('.view-details-btn');
         viewBtn.onclick = () => this.viewVersionDetails(promptName, versionNumber);
 
+        const exportBtn = clone.querySelector('.export-version-btn');
+        exportBtn.onclick = () => this.exportVersion(promptName, versionNumber);
+
         const deleteBtn = clone.querySelector('.delete-version-btn');
         deleteBtn.onclick = () => this.deleteVersion(promptName, versionNumber);
 
@@ -581,6 +584,18 @@ const PromptsLayout = {
         } catch (error) {
             console.error('Errore:', error);
             alert('Errore durante l\'eliminazione della versione');
+        }
+    },
+
+    /**
+     * Esporta una versione specifica
+     */
+    async exportVersion(promptName, version) {
+        try {
+            await window.exportVersion(promptName, version);
+        } catch (error) {
+            console.error('Errore durante l\'export della versione:', error);
+            alert('Errore durante l\'export della versione');
         }
     },
 

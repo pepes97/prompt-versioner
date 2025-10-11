@@ -788,6 +788,44 @@ body.light-mode .diff-section {
     color: #1e293b;
 }
 
+body.light-mode .diff-version-card {
+    background: #ffffff;
+    color: #1e293b;
+    border: 1px solid #e2e8f0;
+}
+
+body.light-mode .diff-version-title {
+    color: #1e293b;
+}
+
+body.light-mode .diff-version-title.baseline {
+    color: #6b7280;
+}
+
+body.light-mode .diff-version-title.comparison {
+    color: #2563eb;
+}
+
+body.light-mode .version-date {
+    color: #64748b;
+}
+
+body.light-mode .prompt-content h4 {
+    color: #1e293b;
+}
+
+body.light-mode .prompt-content pre {
+    color: #374151;
+}
+
+body.light-mode .diff-version-content h4 {
+    color: #1e293b;
+}
+
+body.light-mode .diff-version-content pre {
+    color: #374151;
+}
+
 body.light-mode .diff-control-group select {
     background: #ffffff;
     border-color: #e2e8f0;
@@ -889,6 +927,55 @@ body.light-mode .git-diff-unchanged:nth-child(even) {
 body.light-mode .git-diff-unchanged .git-diff-prefix,
 body.light-mode .git-diff-unchanged .git-diff-content {
     color: #64748b;
+}
+
+body.light-mode .git-diff-added {
+    background: rgba(16, 185, 129, 0.1);
+    border-left-color: #10b981;
+}
+
+body.light-mode .git-diff-added .git-diff-prefix,
+body.light-mode .git-diff-added .git-diff-content {
+    color: #059669;
+}
+
+body.light-mode .git-diff-removed {
+    background: rgba(239, 68, 68, 0.1);
+    border-left-color: #ef4444;
+}
+
+body.light-mode .git-diff-removed .git-diff-prefix,
+body.light-mode .git-diff-removed .git-diff-content {
+    color: #dc2626;
+}
+
+/* Light mode styles for diff changes sections */
+body.light-mode .diff-content {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left-color: #f59e0b;
+}
+
+body.light-mode .system-changes-section h4,
+body.light-mode .user-changes-section h4 {
+    color: #d97706;
+}
+
+body.light-mode .diff-changes-container h3 {
+    color: #2563eb;
+}
+
+body.light-mode .diff-summary {
+    border-top-color: #e2e8f0;
+    color: #64748b;
+}
+
+body.light-mode .added-words {
+    color: #059669;
+}
+
+body.light-mode .removed-words {
+    color: #dc2626;
 }
 
 /* Modal Improvements */
@@ -1098,6 +1185,12 @@ body.light-mode .version-modal-content {
     gap: 1rem;
 }
 
+body.light-mode .similarity-stats {
+    background: #f1f5f9;
+    border-left-color: #8b5cf6;
+    border: 1px solid #e2e8f0;
+}
+
 .similarity-stat .stat-label {
     color: #94a3b8;
     font-size: 0.875rem;
@@ -1143,9 +1236,14 @@ body.light-mode .version-modal-content {
 .metrics-comparison-section {
     margin-top: 2rem;
     padding: 1.5rem;
-    background: rgba(30, 41, 59, 0.3);
+    background: #0f172a;
     border-radius: 8px;
     border-left: 3px solid #8b5cf6;
+}
+
+body.light-mode .metrics-comparison-section {
+    background: #ffffff;
+    border-left-color: #8b5cf6;
 }
 
 .metrics-comparison-section h4 {
@@ -1160,10 +1258,14 @@ body.light-mode .version-modal-content {
 }
 
 .metric-comparison-item {
-    background: rgba(15, 23, 42, 0.5);
+    background: #0f172a;
     padding: 1rem;
     border-radius: 6px;
     border: 1px solid #334155;
+}
+
+body.light-mode .metric-comparison-item {
+    background: #f1f5f9;
 }
 
 .metric-comparison-label {
@@ -1171,6 +1273,10 @@ body.light-mode .version-modal-content {
     font-weight: 600;
     margin-bottom: 0.5rem;
     font-size: 0.9rem;
+}
+
+body.light-mode .metric-comparison-label {
+    color: #374151;
 }
 
 .metric-comparison-values {
@@ -1264,6 +1370,10 @@ body.light-mode .version-modal-content {
 
 .diff-content .unchanged {
     color: #cbd5e1;
+}
+
+body.light-mode .diff-content .unchanged {
+    color: #374151;
 }
 
 .diff-summary {

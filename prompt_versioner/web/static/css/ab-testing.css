@@ -147,10 +147,27 @@ body.light-mode .ab-version-card.winner {
     border-color: #10b981;
 }
 
-body.light-mode #version-a-select,
-body.light-mode #version-b-select,
-body.light-mode #metric-select {
-    background: #ffffff;
-    border-color: #e2e8f0;
-    color: #1e293b;
+body.light-mode #ab-prompt-select,
+body.light-mode #ab-version-a-select,
+body.light-mode #ab-version-b-select,
+body.light-mode #ab-metric-select {
+    background: #ffffff !important;
+    border-color: #e2e8f0 !important;
+    color: #1e293b !important;
+}
+
+body.light-mode #ab-prompt-select:focus,
+body.light-mode #ab-version-a-select:focus,
+body.light-mode #ab-version-b-select:focus,
+body.light-mode #ab-metric-select:focus {
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+}
+
+/* Ensure all selects in AB testing section are properly styled in light mode */
+body.light-mode .ab-testing-section select,
+body.light-mode .setup-field select {
+    background: #ffffff !important;
+    border-color: #e2e8f0 !important;
+    color: #1e293b !important;
 }

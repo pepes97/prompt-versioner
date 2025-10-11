@@ -62,6 +62,14 @@ const API = {
     },
 
     /**
+     * Export specific version of a prompt
+     */
+    async exportVersion(promptName, version) {
+        const response = await fetch(`/api/prompts/${promptName}/versions/${version}/export`);
+        return await response.blob();
+    },
+
+    /**
      * Export all prompts
      */
     async exportAll() {

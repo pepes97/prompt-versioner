@@ -30,6 +30,19 @@ const ExportImport = {
     },
 
     /**
+     * Export specific version of a prompt as JSON
+     */
+    async exportVersion(promptName, version) {
+        try {
+            const blob = await API.exportVersion(promptName, version);
+            Utils.downloadBlob(blob, `${promptName}_v${version}_export.json`);
+            Utils.showNotification(`Exported "${promptName}" version ${version}`, 'success');
+        } catch (error) {
+            Utils.showNotification('Export failed: ' + error.message, 'error');
+        }
+    },
+
+    /**
      * Import prompt from file
      */
     async import() {
@@ -58,4 +71,5 @@ const ExportImport = {
 // Expose globally
 window.exportAll = () => ExportImport.exportAll();
 window.exportSinglePrompt = (name) => ExportImport.exportSingle(name);
+window.exportVersion = (name, version) => ExportImport.exportVersion(name, version);
 window.importPrompt = () => ExportImport.import();

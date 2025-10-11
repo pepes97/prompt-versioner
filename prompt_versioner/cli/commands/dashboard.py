@@ -4,7 +4,7 @@ import click
 from pathlib import Path
 from rich.table import Table
 from prompt_versioner.cli.main_cli import cli
-from ..utils.formatters import format_dashboard_info, print_success, print_warning, console
+from prompt_versioner.cli.utils import format_dashboard_info, print_success, print_warning, console
 
 
 @cli.command()

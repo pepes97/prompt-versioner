@@ -311,6 +311,66 @@ const ABTesting = {
         }
     },
 
+    /**
+     * Create new A/B test - resets the form and loads available prompts
+     */
+    async createNewTest() {
+        try {
+            // Reset all form selections
+            const promptSelect = document.getElementById('ab-prompt-select');
+            const versionASelect = document.getElementById('ab-version-a-select');
+            const versionBSelect = document.getElementById('ab-version-b-select');
+            const metricSelect = document.getElementById('ab-metric-select');
+            const resultsDiv = document.getElementById('ab-test-results');
+
+            // Reset selectors to default values
+            if (promptSelect) promptSelect.value = '';
+            if (versionASelect) {
+                versionASelect.innerHTML = '<option value="">📊 Select Version A (baseline)...</option>';
+            }
+            if (versionBSelect) {
+                versionBSelect.innerHTML = '<option value="">🆚 Select Version B (comparison)...</option>';
+            }
+            if (metricSelect) metricSelect.value = 'quality_score'; // Default metric
+
+            // Clear any existing results
+            if (resultsDiv) {
+                resultsDiv.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-content">
+                            <div class="empty-icon">🧪</div>
+                            <h3>New Test Created</h3>
+                            <p>Select prompts and versions above to configure your A/B test</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Reload prompts to ensure fresh data
+            await this.loadPromptsForAB();
+
+            // Show success feedback
+            console.log('New A/B test created and form reset');
+
+        } catch (error) {
+            console.error('Error creating new A/B test:', error);
+
+            // Show error message in results area
+            const resultsDiv = document.getElementById('ab-test-results');
+            if (resultsDiv) {
+                resultsDiv.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-content">
+                            <div class="empty-icon">❌</div>
+                            <h3>Error</h3>
+                            <p>Failed to create new test. Please try again.</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+    },
+
 };
 
 // Expose globally

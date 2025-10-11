@@ -13,12 +13,12 @@ const DiffComparison = {
 
         if (section.style.display === 'none') {
             section.style.display = 'block';
-            button.textContent = '🔄 Hide Comparison';
+            button.textContent = '🆚 Hide Comparison';
             button.classList.add('active');
             this.loadPromptsForDiff();
         } else {
             section.style.display = 'none';
-            button.textContent = '🔄 Compare Versions';
+            button.textContent = '🆚 Compare Versions';
             button.classList.remove('active');
         }
     },
@@ -194,7 +194,7 @@ const DiffComparison = {
             return;
         }
 
-        this.showLoading(resultsDiv, '🔄 Comparing baseline vs comparison versions...');
+        this.showLoading(resultsDiv, '🆚 Comparing baseline vs comparison versions...');
 
         try {
             // Load both versions and diff data in parallel
@@ -686,12 +686,69 @@ const DiffComparison = {
     },
 
     /**
-     * Escape HTML utility
+     * Escape HTML to prevent XSS
      */
     escapeHtml(text) {
         const div = document.createElement('div');
         div.textContent = text;
         return div.innerHTML;
+    },
+
+    /**
+     * Clear comparison - reset all form fields and results
+     */
+    clearComparison() {
+        try {
+            // Reset all form selections
+            const promptSelect = document.getElementById('diff-prompt-select');
+            const versionASelect = document.getElementById('diff-version-a-select');
+            const versionBSelect = document.getElementById('diff-version-b-select');
+            const resultsDiv = document.getElementById('diff-results');
+
+            // Reset selectors to default values
+            if (promptSelect) promptSelect.value = '';
+            if (versionASelect) {
+                versionASelect.innerHTML = '<option value="">📊 Select BASELINE version (old)...</option>';
+            }
+            if (versionBSelect) {
+                versionBSelect.innerHTML = '<option value="">🆚 Select COMPARISON version (new)...</option>';
+            }
+
+            // Clear any existing results
+            if (resultsDiv) {
+                resultsDiv.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-content">
+                            <div class="empty-icon">🆚</div>
+                            <h3>Comparison Cleared</h3>
+                            <p>Select two versions above to see detailed differences</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Reload prompts to ensure fresh data
+            this.loadPromptsForDiff();
+
+            console.log('Comparison cleared and form reset');
+
+        } catch (error) {
+            console.error('Error clearing comparison:', error);
+
+            // Show error message in results area
+            const resultsDiv = document.getElementById('diff-results');
+            if (resultsDiv) {
+                resultsDiv.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-content">
+                            <div class="empty-icon">❌</div>
+                            <h3>Error</h3>
+                            <p>Failed to clear comparison. Please refresh the page.</p>
+                        </div>
+                    </div>
+                `;
+            }
+        }
     }
 };
 
