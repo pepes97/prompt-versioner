@@ -1,6 +1,6 @@
-# 🚀 Prompt Versioner
-
 <div align="center">
+
+# Prompt Versioner
 
 ![Prompt Versioner Logo](docs/images/logo.png)
 
