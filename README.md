@@ -1,10 +1,9 @@
 <div align="center">
 
-# Prompt Versioner
 
-![Prompt Versioner Logo](docs/images/logo.png)
+<img src="docs/images/logo.svg" alt="Prompt Versioner Logo" width="150" height="150">
 
-**A comprehensive Python library for managing, versioning, and monitoring AI prompt performance with built-in A/B testing, metrics tracking, and performance monitoring capabilities.**
+**A comprehensive Python library for managing and versioning LLM prompts, with built-in A/B testing, metric tracking, and performance monitoring capabilities.**
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
