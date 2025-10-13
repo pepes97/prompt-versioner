@@ -1,456 +1,383 @@
 # Core Concepts
 
-Understanding the fundamental concepts behind **Prompt Versioner** will help you make the most of its powerful features.
+Understanding the fundamental concepts behind **Prompt Versioner** will help you effectively manage and optimize your AI prompts.
 
 ## 🏗️ Architecture Overview
 
-Prompt Versioner is built around several core components that work together to provide comprehensive prompt management:
+Prompt Versioner provides a comprehensive framework for prompt lifecycle management:
 
 ```mermaid
 graph TB
-    A[Prompt Storage] --> B[Version Manager]
-    B --> C[Metrics Tracker]
-    C --> D[Performance Monitor]
-    D --> E[Alert System]
+    subgraph "Core Components"
+        A[Prompt Storage] --> B[Version Manager]
+        B --> C[Metrics Tracker]
+        C --> D[Performance Monitor]
+        B --> E[A/B Testing]
+        E --> C
+    end
 
-    B --> F[A/B Testing]
-    F --> C
+    subgraph "Interfaces"
+        F[CLI Interface]
+        G[Web Dashboard]
+        H[Python API]
+    end
 
-    A --> G[Web Dashboard]
+    subgraph "Integrations"
+        I[Git Integration]
+        J[Database Storage]
+    end
+
+    A --> F
+    A --> G
+    A --> H
+    B --> I
+    A --> J
     C --> G
     D --> G
     E --> G
-    F --> G
-
-    H[CLI Interface] --> A
-    H --> B
-    H --> C
-
-    I[Git Integration] --> A
-    I --> B
 ```
 
-## 📝 Prompts
+### Component Overview
 
-### What is a Prompt?
+- **Prompt Storage**: Centralized repository for all prompt versions
+- **Version Manager**: Semantic versioning and change tracking
+- **Metrics Tracker**: Performance monitoring and analytics
+- **A/B Testing**: Statistical comparison framework
+- **Git Integration**: Version control synchronization
+- **Multi-Interface Access**: CLI, Web dashboard, and Python API
 
-A **prompt** in Prompt Versioner is more than just text—it's a complete specification that includes:
+## 📝 Prompt Structure
 
-- **Content**: The actual prompt text with variable placeholders
-- **Variables**: Named parameters that can be substituted
-- **Metadata**: Tags, descriptions, and custom attributes
-- **Version History**: Complete change tracking
-- **Performance Data**: Metrics from real usage
+### Core Components
 
-### Prompt Structure
+Every prompt in Prompt Versioner contains:
+
+- **System Prompt**: AI role and behavior instructions
+- **User Prompt**: Input template with variable placeholders
+- **Metadata**: Versioning info, timestamps, custom attributes
+- **Performance Data**: Usage metrics and quality scores
 
 ```python
+# Example prompt structure
 {
-    "id": "550e8400-e29b-41d4-a716-446655440000",
-    "content": "You are a {role}. Please {task}: {input}",
-    "variables": {
-        "role": "helpful assistant",
-        "task": "summarize",
-        "input": "Lorem ipsum..."
-    },
-    "tags": ["assistant", "summarization"],
-    "description": "Multi-purpose assistant prompt",
-    "created_at": "2025-01-15T10:30:00Z",
-    "current_version": "1.2.0"
+    "id": "uuid-string",
+    "name": "assistant_prompt",
+    "version": "1.2.0",
+    "system_prompt": "You are a helpful assistant specializing in {domain}.",
+    "user_prompt": "Please help with: {user_input}",
+    "metadata": {"created_for": "customer support", "author": "team_lead"},
+    "timestamp": "2025-01-15T10:30:00Z"
 }
 ```
 
-### Variable System
+### Variable Templates
 
-Variables make prompts reusable and dynamic:
+Use variables for dynamic, reusable prompts:
 
 ```python
-# Template with variables
-content = "You are a {role} specializing in {domain}. {instruction}"
+from prompt_versioner import PromptVersioner, VersionBump
 
-# Multiple use cases with same template
-variables_customer_service = {
-    "role": "customer service representative",
-    "domain": "e-commerce support",
-    "instruction": "Help the customer resolve their issue."
-}
+pv = PromptVersioner(project_name="customer-service", enable_git=False)
 
-variables_technical_support = {
-    "role": "technical support specialist",
-    "domain": "software troubleshooting",
-    "instruction": "Diagnose and solve the technical problem."
-}
+pv.save_version(
+    name="support_assistant",
+    system_prompt="You are a {role} specializing in {domain}.",
+    user_prompt="Issue: {issue}\nProvide {response_type} assistance.",
+    bump_type=VersionBump.MAJOR,
+    metadata={"variables": ["role", "domain", "issue", "response_type"]}
+)
 ```
 
 ## 🔄 Version Management
 
-### Semantic Versioning
+### Semantic Versioning System
 
-Prompt Versioner uses semantic versioning (MAJOR.MINOR.PATCH) to track changes:
+Prompt Versioner uses semantic versioning (MAJOR.MINOR.PATCH):
 
-- **MAJOR** (1.0.0 → 2.0.0): Breaking changes that significantly alter prompt behavior
-- **MINOR** (1.0.0 → 1.1.0): New features or improvements that are backward compatible
-- **PATCH** (1.0.0 → 1.0.1): Bug fixes or minor refinements
+| Type | Format | Use Case | Example |
+|------|--------|----------|---------|
+| **MAJOR** | x.0.0 | Breaking changes, complete redesigns | New prompt structure |
+| **MINOR** | x.y.0 | Feature additions, improvements | Added context variables |
+| **PATCH** | x.y.z | Bug fixes, minor tweaks | Grammar corrections |
 
-### Version Types
+### Version Operations
 
 ```python
-# PATCH: Minor wording improvements
-versioner.create_version(
-    prompt_id=prompt_id,
-    content="You are a helpful assistant. Please answer: {question}",  # Fixed typo
-    bump_type="patch",
-    description="Fixed grammar in prompt"
+from prompt_versioner import PromptVersioner, VersionBump
+
+pv = PromptVersioner(project_name="my-project", enable_git=False)
+
+# Create versions with different bump types
+pv.save_version(
+    name="assistant",
+    system_prompt="You are a helpful assistant.",
+    user_prompt="Question: {question}",
+    bump_type=VersionBump.MAJOR
 )
 
-# MINOR: Enhanced functionality
-versioner.create_version(
-    prompt_id=prompt_id,
-    content="You are a helpful assistant with expertise in {domain}. Please answer: {question}",
-    bump_type="minor",
-    description="Added domain specialization"
-)
+# Get version information
+latest = pv.get_latest("assistant")
+specific = pv.get_version("assistant", "1.0.0")
+all_versions = pv.list_versions("assistant")
 
-# MAJOR: Complete redesign
-versioner.create_version(
-    prompt_id=prompt_id,
-    content="System: {system_role}\nContext: {context}\nQuery: {question}\nResponse:",
-    bump_type="major",
-    description="Restructured to use system/context/query format"
-)
+# Compare versions
+diff = pv.diff("assistant", "1.0.0", "2.0.0", format_output=True)
 ```
-
-### Version Lifecycle
-
-Each version goes through several stages:
-
-1. **Development**: Being created and tested
-2. **Testing**: Under A/B test evaluation
-3. **Production**: Actively used in production
-4. **Deprecated**: Scheduled for retirement
-5. **Archived**: No longer used but kept for reference
 
 ## 📊 Metrics and Performance
 
-### Core Metrics
+### Key Performance Indicators
 
-Prompt Versioner tracks essential performance indicators:
+Track essential metrics for prompt optimization:
 
-```python
-# Token Usage
-input_tokens: int      # Tokens in the prompt
-output_tokens: int     # Tokens in the response
-total_tokens: int      # Combined token count
+| Metric | Description | Optimal Range |
+|--------|-------------|---------------|
+| **Quality Score** | Human or AI assessment (0-1) | > 0.8 |
+| **Latency** | Response time in milliseconds | < 3000ms |
+| **Cost** | Token usage cost in euros | Varies by model |
+| **Success Rate** | Successful request percentage | > 95% |
 
-# Performance
-latency: float         # Response time in seconds
-cost: float           # Estimated cost in USD
-
-# Quality
-quality_score: float   # 0-1 quality assessment
-error_rate: float     # Rate of failed requests
-```
-
-### Quality Assessment
-
-Quality can be measured through multiple approaches:
+### Logging Metrics
 
 ```python
-# Manual quality scoring
-versioner.track_metrics(
-    prompt_id=prompt_id,
+# Log performance data
+pv.log_metrics(
+    name="assistant",
     version="1.1.0",
-    quality_score=0.85,  # Human assessment
-    quality_metadata={
-        "reviewer": "expert_user",
-        "criteria": "accuracy,helpfulness,clarity"
-    }
+    model_name="gpt-4o-mini",
+    input_tokens=150,
+    output_tokens=200,
+    latency_ms=1500,
+    cost_eur=0.004,
+    quality_score=0.85,
+    success=True,
+    metadata={"domain": "customer_service"}
 )
 
-# Automated quality scoring
-from prompt_versioner.metrics import AutoQualityScorer
+# Analyze performance
+version_data = pv.get_version("assistant", "1.1.0")
+metrics = pv.storage.get_metrics(version_id=version_data["id"])
 
-scorer = AutoQualityScorer(model="sentiment-analysis")
-quality_score = scorer.score(prompt_response)
-```
-
-### Performance Baselines
-
-Establish performance baselines for comparison:
-
-```python
-# Set baseline for a prompt
-versioner.set_baseline(
-    prompt_id=prompt_id,
-    version="1.0.0",
-    metrics={
-        "target_latency": 2.0,
-        "target_quality": 0.8,
-        "max_cost_per_1k_tokens": 0.02
-    }
-)
-
-# Compare current performance to baseline
-performance = versioner.compare_to_baseline(prompt_id, "1.2.0")
-print(f"Quality improvement: {performance.quality_delta:.2%}")
-print(f"Latency change: {performance.latency_delta:.2f}s")
+if metrics:
+    avg_quality = sum(m.get("quality_score", 0) for m in metrics) / len(metrics)
+    avg_latency = sum(m.get("latency_ms", 0) for m in metrics) / len(metrics)
+    print(f"Average quality: {avg_quality:.2f}")
+    print(f"Average latency: {avg_latency:.0f}ms")
 ```
 
 ## 🧪 A/B Testing Framework
 
-### Test Philosophy
+### Statistical Testing Structure
 
-A/B testing in Prompt Versioner follows rigorous statistical principles:
+A/B testing framework with built-in statistical analysis:
 
-- **Hypothesis-driven**: Each test has a clear hypothesis
-- **Statistical validity**: Proper sample sizes and significance testing
-- **Practical significance**: Focus on meaningful improvements
-- **Controlled experiments**: Isolate variables being tested
+```mermaid
+graph LR
+    A[Control Group<br/>Version A] --> C[Statistical Analysis]
+    B[Treatment Group<br/>Version B] --> C
+    C --> D[Results<br/>Winner + Confidence]
 
-### Test Structure
+    subgraph "Metrics Collected"
+        E[Quality Scores]
+        F[Performance Data]
+        G[Success Rates]
+    end
 
-```python
-from prompt_versioner.testing import ABTest
-
-test = ABTest(
-    name="Customer Service Tone Experiment",
-    hypothesis="More empathetic language improves customer satisfaction",
-    primary_metric="quality_score",
-    minimum_detectable_effect=0.05,  # 5% improvement
-    confidence_level=0.95,
-    statistical_power=0.8
-)
-
-# Add control group (current version)
-test.add_variant(
-    name="control",
-    prompt_id=prompt_id,
-    version="1.0.0",
-    traffic_percentage=50,
-    description="Current production prompt"
-)
-
-# Add treatment group (new version)
-test.add_variant(
-    name="empathetic",
-    prompt_id=prompt_id,
-    version="1.1.0",
-    traffic_percentage=50,
-    description="Enhanced with empathetic language"
-)
+    A --> E
+    B --> E
+    A --> F
+    B --> F
+    A --> G
+    B --> G
 ```
 
-### Statistical Analysis
-
-The framework provides comprehensive statistical analysis:
+### Implementation
 
 ```python
-# Get test results
-results = test.get_results()
+from prompt_versioner import ABTest
 
-print(f"Control group performance: {results.control.mean_quality:.3f}")
-print(f"Treatment group performance: {results.treatment.mean_quality:.3f}")
-print(f"Difference: {results.difference:.3f} ({results.difference_percentage:.1%})")
-print(f"Statistical significance: p={results.p_value:.4f}")
-print(f"Confidence interval: [{results.ci_lower:.3f}, {results.ci_upper:.3f}]")
+# Create A/B test
+ab_test = ABTest(
+    versioner=pv,
+    prompt_name="customer_service",
+    version_a="1.0.0",  # Control
+    version_b="1.1.0",  # Treatment
+    metric_name="quality_score"
+)
 
-# Decision recommendation
-if results.is_significant and results.practical_significance:
-    print("✅ Recommend deploying the new version")
-elif results.is_significant:
-    print("⚠️ Statistically significant but may not be practically significant")
-else:
-    print("❌ No significant improvement detected")
+# Log test results for both groups
+for i in range(30):
+    ab_test.log_result("a", 0.75 + (i * 0.005))  # Control baseline
+    ab_test.log_result("b", 0.80 + (i * 0.005))  # Treatment improvement
+
+# Get statistical results
+if ab_test.is_ready(min_samples=25):
+    result = ab_test.get_result()
+    print(f"Winner: Version {result.winner}")
+    print(f"Improvement: {result.improvement:.1%}")
+    print(f"Confidence: {result.confidence:.1%}")
 ```
+
+### Key Features
+
+- **Statistical Significance**: Automatic p-value calculation
+- **Sample Size Validation**: Ensures reliable results
+- **Confidence Intervals**: Quantifies uncertainty
+- **Clear Recommendations**: Winner determination with confidence levels
 
 ## ⚠️ Monitoring and Alerts
 
-### Alert System
+### Performance Thresholds
 
-The monitoring system watches for performance regressions and anomalies:
+Set up monitoring with configurable thresholds:
+
+| Metric | Warning | Critical |
+|--------|---------|----------|
+| Quality Score | < 0.8 | < 0.6 |
+| Latency | > 3000ms | > 5000ms |
+| Success Rate | < 98% | < 95% |
+| Cost per Request | > €0.01 | > €0.02 |
+
+### Basic Monitoring
 
 ```python
-from prompt_versioner.alerts import AlertRule
+def monitor_performance(pv, prompt_name, version, min_samples=20):
+    """Monitor prompt performance with threshold alerts"""
 
-# Define alert rules
-rules = [
-    AlertRule(
-        name="Quality Regression",
-        condition="quality_score < baseline.quality_score * 0.9",
-        severity="error",
-        description="Quality has dropped by more than 10%"
-    ),
-    AlertRule(
-        name="High Latency",
-        condition="latency > 5.0",
-        severity="warning",
-        description="Response time exceeds 5 seconds"
-    ),
-    AlertRule(
-        name="Cost Spike",
-        condition="cost > baseline.cost * 2.0",
-        severity="warning",
-        description="Cost has doubled compared to baseline"
-    )
-]
+    version_data = pv.get_version(prompt_name, version)
+    metrics = pv.storage.get_metrics(version_id=version_data["id"])
+
+    if len(metrics) < min_samples:
+        print(f"⏳ Need {min_samples - len(metrics)} more samples")
+        return
+
+    # Calculate averages from recent metrics
+    recent = metrics[-min_samples:]
+    avg_quality = sum(m.get("quality_score", 0) for m in recent) / len(recent)
+    avg_latency = sum(m.get("latency_ms", 0) for m in recent) / len(recent)
+    success_rate = sum(1 for m in recent if m.get("success", True)) / len(recent)
+
+    # Check thresholds and alert
+    alerts = []
+    if avg_quality < 0.7: alerts.append(f"Low quality: {avg_quality:.2f}")
+    if avg_latency > 3000: alerts.append(f"High latency: {avg_latency:.0f}ms")
+    if success_rate < 0.95: alerts.append(f"Low success: {success_rate:.1%}")
+
+    if alerts:
+        print(f"🚨 {prompt_name} v{version} alerts: {', '.join(alerts)}")
+    else:
+        print(f"✅ {prompt_name} v{version} healthy")
+
+# Usage
+monitor_performance(pv, "customer_service", "1.1.0")
 ```
+## 🤝 Collaboration and Organization
 
-### Regression Detection
+### Team Annotations
 
-Automated detection of performance regressions:
-
-```python
-# Enable regression monitoring
-versioner.enable_regression_monitoring(
-    prompt_id=prompt_id,
-    window_size=100,  # Monitor last 100 requests
-    sensitivity=0.1,  # 10% change threshold
-    metrics=["quality_score", "latency", "cost"]
-)
-
-# Get regression alerts
-regressions = versioner.get_active_regressions()
-for regression in regressions:
-    print(f"⚠️ Regression detected in {regression.metric}")
-    print(f"   Baseline: {regression.baseline:.3f}")
-    print(f"   Current: {regression.current:.3f}")
-    print(f"   Change: {regression.change_percentage:.1%}")
-```
-
-## 🤝 Collaboration Features
-
-### Annotations System
-
-Team collaboration through annotations:
+Enable team collaboration with structured annotations:
 
 ```python
-# Add annotation to a prompt version
-versioner.add_annotation(
-    prompt_id=prompt_id,
+# Add team annotations for reviews and approvals
+pv.add_annotation(
+    name="customer_service",
     version="1.1.0",
-    content="This version works well for technical queries but may be too complex for general users",
-    author="product_manager",
-    tags=["feedback", "user-testing"]
+    text="Approved for production deployment after A/B testing",
+    author="team_lead"
 )
 
-# Add review annotation
-versioner.add_annotation(
-    prompt_id=prompt_id,
-    version="1.1.0",
-    content="Approved for A/B testing in customer service domain",
-    author="team_lead",
-    tags=["approval", "testing"],
-    annotation_type="review"
-)
+# Read all team annotations
+annotations = pv.get_annotations("customer_service", "1.1.0")
+for note in annotations:
+    print(f"{note['author']}: {note['text']}")
 ```
 
-### Change Tracking
+### Prompt Organization
 
-Complete audit trail of all changes:
-
-```python
-# Get change history
-history = versioner.get_change_history(prompt_id)
-
-for change in history:
-    print(f"Version {change.version} by {change.author}")
-    print(f"  Change: {change.bump_type}")
-    print(f"  Description: {change.description}")
-    print(f"  Timestamp: {change.created_at}")
-    print(f"  Files changed: {len(change.file_changes)}")
-```
-
-## 🔍 Search and Discovery
-
-### Tagging System
-
-Organize prompts with tags for easy discovery:
+Structure prompts using naming conventions and metadata:
 
 ```python
-# Hierarchical tags
-tags = [
-    "domain:customer-service",
-    "type:assistant",
-    "language:english",
-    "version:production",
-    "team:support"
+# Organized naming convention: domain_subdomain_type
+prompt_types = [
+    "customer_support_general",
+    "customer_support_technical",
+    "marketing_email_campaigns",
+    "marketing_social_media",
+    "internal_qa_automation"
 ]
 
-# Search by tags
-prompts = versioner.search_prompts(
-    tags=["domain:customer-service", "version:production"],
-    tag_operator="AND"  # Must have ALL tags
-)
+# Find prompts by domain
+def find_prompts_by_domain(pv, domain):
+    all_prompts = pv.list_prompts()
+    return [name for name in all_prompts if name.startswith(f"{domain}_")]
+
+customer_prompts = find_prompts_by_domain(pv, "customer")
+marketing_prompts = find_prompts_by_domain(pv, "marketing")
 ```
 
-### Advanced Search
-
-Powerful search capabilities:
+### Version History Tracking
 
 ```python
-# Search by multiple criteria
-results = versioner.search_prompts(
-    content_contains="helpful assistant",
-    tags=["production"],
-    quality_score_min=0.8,
-    created_after="2025-01-01",
-    has_active_tests=True,
-    sort_by="quality_score",
-    sort_order="desc"
-)
+# Get comprehensive version history
+versions = pv.list_versions("customer_service")
+for v in versions:
+    print(f"v{v['version']} - {v['timestamp']}")
+
+# Compare version changes
+diff = pv.diff("customer_service", "1.0.0", "1.1.0", format_output=True)
+print(f"Changes: {diff.summary}")
 ```
-
-## 🔐 Security and Access Control
-
-### Data Protection
-
-- **Encryption**: Database encryption for sensitive prompts
-- **Masking**: Automatic masking of sensitive variables
-- **Audit Logging**: Complete audit trail of all actions
-- **Access Control**: Role-based permissions
-
-### Role-Based Access
-
-```python
-# Define user roles
-roles = {
-    "viewer": ["read"],
-    "editor": ["read", "write"],
-    "admin": ["read", "write", "delete", "admin"]
-}
-
-# Check permissions
-if versioner.has_permission(user_id, "write", prompt_id):
-    # Allow edit
-    pass
-```
-
-## 🔄 Integration Patterns
 
 ### Git Integration
 
-Seamless integration with version control:
+Synchronize with version control:
 
 ```python
-# Auto-commit prompt changes
-versioner.enable_git_tracking(
-    repository_path="/path/to/git/repo",
-    auto_commit=True,
-    branch="prompts"
+# Enable Git tracking
+pv_git = PromptVersioner(
+    project_name="git-tracked",
+    enable_git=True,
+    git_repo="/path/to/repo"
+)
+
+# Install hooks for automatic tracking
+pv_git.install_git_hooks()
+
+# Prompt changes are now tracked in Git
+pv_git.save_version(
+    name="tracked_prompt",
+    system_prompt="You are a helpful assistant.",
+    user_prompt="Help with: {request}",
+    bump_type=VersionBump.MAJOR
 )
 ```
 
-### CI/CD Integration
-
-Integrate with continuous deployment:
+### Backup and Export
 
 ```python
-# Export prompts for deployment
-versioner.export_for_deployment(
-    environment="production",
+from pathlib import Path
+
+# Export prompts for backup
+pv.export_prompt(
+    name="customer_service",
+    output_file=Path("backups/customer_service.json"),
     format="json",
     include_metrics=True
 )
+
+# Import from backup
+result = pv.import_prompt(
+    input_file=Path("backups/customer_service.json"),
+    overwrite=False
+)
 ```
 
-Understanding these core concepts will help you leverage Prompt Versioner's full capabilities. Next, explore [version management](version-management.md) in detail.
+## 📚 Next Steps
+
+Now that you understand the core concepts, explore these advanced topics:
+
+- **[Version Management](version-management.md)**: Deep dive into semantic versioning strategies
+- **[A/B Testing Guide](ab-testing.md)**: Advanced statistical testing techniques
+- **[Performance Monitoring](performance-monitoring.md)**: Monitoring prompts
+- **[Team Workflows](collaboration.md)**: Set up collaborative prompt development
+- **[API Reference](../api-reference/core/versioner.md)**: Complete method documentation

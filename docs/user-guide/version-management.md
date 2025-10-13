@@ -207,27 +207,6 @@ success = pv.delete_prompt("old_prompt")
 print(f"Deleted prompt: {success}")
 ```
 
-## 🎯 Best Practices
-
-### 1. Consistent Naming
-- Use descriptive prompt names: `email_classifier`, `code_reviewer`
-- Be consistent across your project
-
-### 2. Meaningful Versions
-- Use PATCH for typos and small fixes
-- Use MINOR for feature additions
-- Use MAJOR for breaking changes
-
-### 3. Track Everything
-- Always log metrics for production usage
-- Add annotations for important changes
-- Use metadata to track context
-
-### 4. Regular Cleanup
-- Export important prompts before cleanup
-- Archive old versions you don't need
-- Keep your database manageable
-
 ## 📚 Next Steps
 
 - [Metrics Tracking](metrics-tracking.md) - Track prompt performance

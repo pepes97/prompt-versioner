@@ -1,10 +1,5 @@
 # Welcome to Prompt Versioner
 
-<div align="center">
-    <img src="images/logo.svg" alt="Prompt Versioner Logo" width="200" height="200">
-    <h2>Comprehensive Python library for managing and versioning LLM prompts</h2>
-</div>
-
 **Prompt Versioner** is an enterprise-grade prompt management system that provides version control, performance tracking, A/B testing, and collaboration tools for AI applications.
 
 ## 🎯 Why Prompt Versioner?
@@ -103,7 +98,6 @@ python examples/run_dashboard.py
 - **[User Guide](user-guide/core-concepts.md)**: Comprehensive guides for all features
 - **[Examples](examples/basic-usage.md)**: Practical examples and use cases
 - **[API Reference](api-reference/core/versioner.md)**: Complete API documentation
-- **[Development](development/contributing.md)**: Contributing and development guides
 
 ## 🔗 Quick Links
 

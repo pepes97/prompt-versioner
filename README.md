@@ -727,31 +727,6 @@ def comprehensive_code_review(code: str, language: str):
 
 ---
 
-## 🔧 Configuration & Best Practices
-
-### Environment Setup
-
-Create a `.env` file for your project:
-
-```bash
-# Database Configuration
-PROMPT_VERSIONER_DB_PATH=./prompts.sqlite
-PROMPT_VERSIONER_PROJECT_NAME=my-ai-project
-
-# Git Integration (optional)
-PROMPT_VERSIONER_ENABLE_GIT=true
-PROMPT_VERSIONER_AUTO_COMMIT=false
-
-# Web Dashboard
-PROMPT_VERSIONER_DASHBOARD_HOST=0.0.0.0
-PROMPT_VERSIONER_DASHBOARD_PORT=5000
-PROMPT_VERSIONER_DASHBOARD_DEBUG=false
-
-# Monitoring
-PROMPT_VERSIONER_ENABLE_ALERTS=true
-PROMPT_VERSIONER_ALERT_EMAIL=admin@yourcompany.com
-```
-
 ### Best Practices
 
 > 📁 **See also**: [`examples/test_all_features.py`](examples/test_all_features.py) for complete workflow examples

@@ -198,7 +198,7 @@ git_config = {
 versioner = PromptVersioner(git_config=git_config)
 ```
 
-### Import/Export Operations
+### Export Operations
 
 ```python
 from pathlib import Path
@@ -216,14 +216,6 @@ versioner.export_all(
     output_dir=Path("backups/"),
     format="yaml"
 )
-
-# Import prompt from file
-result = versioner.import_prompt(
-    input_file=Path("backups/code_reviewer.json"),
-    overwrite=False,
-    bump_type=VersionBump.PATCH
-)
-print(f"Imported {result['imported']} versions, skipped {result['skipped']}")
 ```
 
 ### Annotations and Metadata
@@ -253,63 +245,7 @@ if success:
     print("Prompt and all versions deleted")
 ```
 
-## Integration Patterns
-
-### With OpenAI
-
-```python
-import openai
-from prompt_versioner import PromptVersioner, VersionBump
-
-versioner = PromptVersioner(project_name="openai-integration")
-client = openai.OpenAI()
-
-def call_llm_with_tracking(name, version, variables, model="gpt-4o"):
-    # Get the prompt version
-    prompt_data = versioner.get_version(name, version)
-    if not prompt_data:
-        raise ValueError(f"Prompt {name} version {version} not found")
-
-    # Render the prompt (simple string formatting for now)
-    system_prompt = prompt_data["system_prompt"]
-    user_prompt = prompt_data["user_prompt"].format(**variables)
-
-    # Make LLM call
-    start_time = time.time()
-    response = client.chat.completions.create(
-        model=model,
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt}
-        ],
-        temperature=0.7
-    )
-    latency_ms = (time.time() - start_time) * 1000
-
-    # Track metrics
-    versioner.log_metrics(
-        name=name,
-        version=version,
-        model_name=model,
-        input_tokens=response.usage.prompt_tokens,
-        output_tokens=response.usage.completion_tokens,
-        latency_ms=latency_ms,
-        success=True,
-        metadata={"variables": variables}
-    )
-
-    return response.choices[0].message.content
-
-# Usage
-result = call_llm_with_tracking(
-    name="code_reviewer",
-    version="1.1.0",
-    variables={"code": "def hello(): print('world')"},
-    model="gpt-4o"
-)
-```
-
-### With A/B Testing
+## Integration A/B Testing
 
 ```python
 from prompt_versioner.testing import ABTest
@@ -369,52 +305,6 @@ def review_code(code):
 
 # Uninstall hooks when done
 versioner.uninstall_git_hooks()
-```
-
-## Error Handling
-
-```python
-try:
-    # This might fail if prompt doesn't exist
-    version = versioner.get_version("non-existent", "1.0.0")
-    if not version:
-        print("Prompt or version not found")
-except Exception as e:
-    print(f"Error retrieving version: {e}")
-
-try:
-    # This might fail with invalid version string
-    versioner.save_version(
-        name="test",
-        system_prompt="Test",
-        user_prompt="Test",
-        version="invalid-version-string"
-    )
-except ValueError as e:
-    print(f"Invalid version format: {e}")
-```
-metrics_data = [
-    {
-        "prompt_id": prompt_ids[0],
-        "version": "1.0.0",
-        "input_tokens": 20,
-        "output_tokens": 50,
-        "latency": 1.2,
-        "quality_score": 0.8
-    },
-    # ... more metrics
-]
-
-versioner.batch_track_metrics(metrics_data)
-```
-
-### Connection Management
-
-```python
-# Use context manager for automatic cleanup
-with PromptVersioner(db_path="prompts.db") as versioner:
-    prompt_id = versioner.save_prompt(...)
-    # Database connection automatically closed
 ```
 
 ## See Also
