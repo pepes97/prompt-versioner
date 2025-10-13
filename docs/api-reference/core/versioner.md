@@ -6,11 +6,11 @@ The `PromptVersioner` class is the main entry point for the Prompt Versioner lib
 
 The `PromptVersioner` class orchestrates all the components of the system, providing a unified API for:
 
-- Creating and managing prompts
+- Creating and managing prompt versions
 - Version control and history tracking
 - Metrics collection and analysis
-- A/B testing coordination
-- Performance monitoring
+- Git integration and tracking
+- Import/export functionality
 
 ## Class Reference
 
@@ -18,12 +18,14 @@ The main `PromptVersioner` class can be found in `prompt_versioner.core.versione
 
 ### Key Methods
 
-- `save_prompt()` - Create a new prompt
-- `create_version()` - Create a new version of an existing prompt
-- `get_prompt()` - Retrieve a prompt by ID
-- `render_prompt()` - Render a prompt with variables
-- `track_metrics()` - Track performance metrics
-- `search_prompts()` - Search prompts by criteria
+- `save_version()` - Save a new prompt version
+- `get_version()` - Retrieve a specific version
+- `get_latest()` - Get the latest version of a prompt
+- `list_versions()` - List all versions of a prompt
+- `list_prompts()` - List all prompt names
+- `log_metrics()` - Track performance metrics
+- `diff()` - Compare versions
+- `rollback()` - Rollback to a previous version
 
 ## Usage Examples
 
@@ -32,80 +34,109 @@ The main `PromptVersioner` class can be found in `prompt_versioner.core.versione
 ```python
 from prompt_versioner import PromptVersioner
 
-# Default configuration
-versioner = PromptVersioner()
+# Default configuration (creates prompts.db in current directory)
+versioner = PromptVersioner(project_name="my-project")
 
-# Custom database path
-versioner = PromptVersioner(db_path="/path/to/prompts.db")
-
-# With Git integration
+# Custom database path and disable Git
 versioner = PromptVersioner(
-    db_path="prompts.db",
-    git_repo="/path/to/git/repo"
+    project_name="my-project",
+    db_path="/path/to/prompts.db",
+    enable_git=False
+)
+
+# With Git integration enabled
+versioner = PromptVersioner(
+    project_name="my-project",
+    enable_git=True,
+    auto_track=True
 )
 ```
 
-### Creating and Managing Prompts
+### Creating and Managing Prompt Versions
 
 ```python
-# Create a new prompt
-prompt_id = versioner.save_prompt(
-    content="You are a {role}. Please help with: {task}",
-    variables={"role": "assistant", "task": "coding"},
-    tags=["development", "assistant"],
-    description="General development assistant"
+from prompt_versioner import PromptVersioner, VersionBump
+
+versioner = PromptVersioner(project_name="my-app")
+
+# Save a new prompt version
+version_id = versioner.save_version(
+    name="code_reviewer",
+    system_prompt="You are an expert code reviewer.",
+    user_prompt="Review this code:\n{code}",
+    bump_type=VersionBump.MAJOR,  # Creates version 1.0.0
+    metadata={"type": "code_review", "model_target": "gpt-4"}
 )
 
-# Get a prompt
-prompt = versioner.get_prompt(prompt_id)
-print(f"Current version: {prompt['current_version']}")
+# Get the latest version
+latest = versioner.get_latest("code_reviewer")
+print(f"Latest version: {latest['version']}")
 
 # List all prompts
 prompts = versioner.list_prompts()
-for prompt in prompts:
-    print(f"{prompt['id']}: {prompt['description']}")
+for prompt_name in prompts:
+    print(f"Prompt: {prompt_name}")
+
+# List versions for a specific prompt
+versions = versioner.list_versions("code_reviewer")
+for version in versions:
+    print(f"v{version['version']}: {version['timestamp']}")
 ```
 
 ### Version Management
 
 ```python
-# Create a new version
-new_version = versioner.create_version(
-    prompt_id=prompt_id,
-    content="You are an expert {role}. Please assist with: {task}",
-    bump_type="minor",
-    description="Enhanced expertise"
+# Create incremental versions
+versioner.save_version(
+    name="code_reviewer",
+    system_prompt="You are an EXPERT code reviewer with deep knowledge.",
+    user_prompt="Review this code thoroughly:\n{code}\n\nProvide detailed feedback.",
+    bump_type=VersionBump.MINOR,  # Creates version 1.1.0
+    metadata={"improvement": "enhanced expertise"}
 )
 
-# Get version history
-history = versioner.get_version_history(prompt_id)
-for version in history:
-    print(f"v{version['version']}: {version['description']}")
+# Get a specific version
+version_data = versioner.get_version("code_reviewer", "1.0.0")
+print(f"System prompt: {version_data['system_prompt']}")
+print(f"User prompt: {version_data['user_prompt']}")
 
-# Get specific version
-version_data = versioner.get_prompt_version(prompt_id, "1.1.0")
+# Compare versions
+diff = versioner.diff("code_reviewer", "1.0.0", "1.1.0")
+print(f"Changes: {diff.summary}")
+
+# Rollback to a previous version
+rollback_id = versioner.rollback("code_reviewer", "1.0.0")
+print(f"Rolled back, new version ID: {rollback_id}")
 ```
 
 ### Metrics Tracking
 
 ```python
-# Track metrics for a prompt usage
-versioner.track_metrics(
-    prompt_id=prompt_id,
+# Log metrics for a prompt usage
+versioner.log_metrics(
+    name="code_reviewer",
     version="1.1.0",
-    llm_response="Here's how to solve your coding problem...",
-    input_tokens=50,
-    output_tokens=200,
-    latency=1.5,
-    cost=0.003,
-    quality_score=0.85,
-    metadata={"model": "gpt-4", "temperature": 0.7}
+    model_name="gpt-4o",
+    input_tokens=150,
+    output_tokens=250,
+    latency_ms=420.5,
+    quality_score=0.95,
+    cost_eur=0.003,
+    temperature=0.7,
+    success=True,
+    metadata={"user_feedback": "excellent"}
 )
 
 # Get metrics for analysis
-metrics = versioner.get_metrics(prompt_id, version="1.1.0")
-print(f"Average quality: {metrics['avg_quality']:.2f}")
-print(f"Average latency: {metrics['avg_latency']:.2f}s")
+version = versioner.get_version("code_reviewer", "1.1.0")
+metrics = versioner.storage.get_metrics(version_id=version["id"], limit=100)
+
+# Calculate averages
+if metrics:
+    avg_quality = sum(m["quality_score"] for m in metrics if m["quality_score"]) / len(metrics)
+    avg_latency = sum(m["latency_ms"] for m in metrics if m["latency_ms"]) / len(metrics)
+    print(f"Average quality: {avg_quality:.2f}")
+    print(f"Average latency: {avg_latency:.2f}ms")
 ```
 
 ### Rendering Prompts
@@ -167,24 +198,59 @@ git_config = {
 versioner = PromptVersioner(git_config=git_config)
 ```
 
-### Advanced Configuration
+### Import/Export Operations
 
 ```python
-from prompt_versioner.config import Config
+from pathlib import Path
 
-config = Config(
-    database_path="/opt/prompts/prod.db",
-    enable_metrics=True,
-    enable_git_tracking=True,
-    git_repository="/opt/git/prompts",
-    alert_thresholds={
-        "quality_score": 0.7,
-        "latency": 5.0,
-        "cost": 0.1
-    }
+# Export a prompt and all its versions
+versioner.export_prompt(
+    name="code_reviewer",
+    output_file=Path("backups/code_reviewer.json"),
+    format="json",
+    include_metrics=True
 )
 
-versioner = PromptVersioner(config=config)
+# Export all prompts
+versioner.export_all(
+    output_dir=Path("backups/"),
+    format="yaml"
+)
+
+# Import prompt from file
+result = versioner.import_prompt(
+    input_file=Path("backups/code_reviewer.json"),
+    overwrite=False,
+    bump_type=VersionBump.PATCH
+)
+print(f"Imported {result['imported']} versions, skipped {result['skipped']}")
+```
+
+### Annotations and Metadata
+
+```python
+# Add annotation to a version
+versioner.add_annotation(
+    name="code_reviewer",
+    version="1.1.0",
+    text="This version performs significantly better on Python code",
+    author="team@company.com"
+)
+
+# Get annotations
+annotations = versioner.get_annotations("code_reviewer", "1.1.0")
+for annotation in annotations:
+    print(f"{annotation['author']}: {annotation['text']}")
+
+# Delete version if needed
+success = versioner.delete_version("code_reviewer", "1.0.0")
+if success:
+    print("Version deleted successfully")
+
+# Delete entire prompt and all versions
+success = versioner.delete_prompt("old_prompt")
+if success:
+    print("Prompt and all versions deleted")
 ```
 
 ## Integration Patterns
@@ -193,40 +259,53 @@ versioner = PromptVersioner(config=config)
 
 ```python
 import openai
-from prompt_versioner import PromptVersioner
+from prompt_versioner import PromptVersioner, VersionBump
 
-versioner = PromptVersioner()
+versioner = PromptVersioner(project_name="openai-integration")
 client = openai.OpenAI()
 
-def call_llm_with_tracking(prompt_id, version, variables):
-    # Get and render prompt
-    rendered = versioner.render_prompt(prompt_id, version, variables)
+def call_llm_with_tracking(name, version, variables, model="gpt-4o"):
+    # Get the prompt version
+    prompt_data = versioner.get_version(name, version)
+    if not prompt_data:
+        raise ValueError(f"Prompt {name} version {version} not found")
+
+    # Render the prompt (simple string formatting for now)
+    system_prompt = prompt_data["system_prompt"]
+    user_prompt = prompt_data["user_prompt"].format(**variables)
 
     # Make LLM call
+    start_time = time.time()
     response = client.chat.completions.create(
-        model="gpt-4",
-        messages=[{"role": "user", "content": rendered}],
-        max_tokens=150
+        model=model,
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ],
+        temperature=0.7
     )
+    latency_ms = (time.time() - start_time) * 1000
 
     # Track metrics
-    versioner.track_metrics(
-        prompt_id=prompt_id,
+    versioner.log_metrics(
+        name=name,
         version=version,
-        llm_response=response.choices[0].message.content,
+        model_name=model,
         input_tokens=response.usage.prompt_tokens,
         output_tokens=response.usage.completion_tokens,
-        cost=calculate_cost(response.usage),
-        metadata={"model": "gpt-4"}
+        latency_ms=latency_ms,
+        success=True,
+        metadata={"variables": variables}
     )
 
     return response.choices[0].message.content
 
 # Usage
 result = call_llm_with_tracking(
-    prompt_id="my-prompt-id",
+    name="code_reviewer",
     version="1.1.0",
-    variables={"role": "teacher", "task": "explain quantum physics"}
+    variables={"code": "def hello(): print('world')"},
+    model="gpt-4o"
 )
 ```
 
@@ -235,81 +314,85 @@ result = call_llm_with_tracking(
 ```python
 from prompt_versioner.testing import ABTest
 
-# Create A/B test
+# Create A/B test comparing two versions
 ab_test = ABTest(
-    name="Assistant Personality Test",
-    versioner=versioner
+    versioner=versioner,
+    prompt_name="code_reviewer",
+    version_a="1.0.0",
+    version_b="1.1.0",
+    metric_name="quality_score"
 )
 
-ab_test.add_variant("formal", prompt_id, "1.0.0", 50)
-ab_test.add_variant("casual", prompt_id, "1.1.0", 50)
+# Log test results
+for i in range(50):
+    # Simulate A/B test with random quality scores
+    quality_a = random.uniform(0.7, 0.85)
+    quality_b = random.uniform(0.75, 0.90)
 
-test_id = ab_test.start()
+    ab_test.log_result("a", quality_a)
+    ab_test.log_result("b", quality_b)
 
-# Use in production
-def get_prompt_for_user(user_id):
-    variant = ab_test.get_variant(user_id)
-    return versioner.render_prompt(
-        prompt_id=variant["prompt_id"],
-        version=variant["version"],
-        variables=get_user_context(user_id)
+# Get results
+if ab_test.is_ready(min_samples=20):
+    result = ab_test.get_result()
+    print(f"Winner: {result.winner}")
+    print(f"Improvement: {result.improvement:.2f}%")
+    ab_test.print_result()
+```
+
+## Testing Integration
+
+```python
+# Test a specific version
+with versioner.test_version("code_reviewer", "1.1.0") as test_context:
+    # Any metrics logged here will be tagged as test metrics
+    versioner.log_metrics(
+        name="code_reviewer",
+        version="1.1.0",
+        model_name="gpt-4o",
+        quality_score=0.92,
+        metadata={"test_case": "unit_test_1"}
     )
+```
+
+## Git Integration
+
+```python
+# Enable Git hooks for automatic versioning
+versioner.install_git_hooks()
+
+# Track decorator automatically creates versions on Git commits
+@versioner.track("code_reviewer", auto_commit=True)
+def review_code(code):
+    # This function will be automatically tracked
+    return f"Review of: {code}"
+
+# Uninstall hooks when done
+versioner.uninstall_git_hooks()
 ```
 
 ## Error Handling
 
 ```python
-from prompt_versioner.exceptions import (
-    PromptNotFoundError,
-    VersionNotFoundError,
-    InvalidBumpTypeError
-)
-
 try:
     # This might fail if prompt doesn't exist
-    prompt = versioner.get_prompt("non-existent-id")
-except PromptNotFoundError as e:
-    print(f"Prompt not found: {e}")
+    version = versioner.get_version("non-existent", "1.0.0")
+    if not version:
+        print("Prompt or version not found")
+except Exception as e:
+    print(f"Error retrieving version: {e}")
 
 try:
-    # This might fail if version doesn't exist
-    version = versioner.get_prompt_version(prompt_id, "999.0.0")
-except VersionNotFoundError as e:
-    print(f"Version not found: {e}")
-
-try:
-    # This might fail with invalid bump type
-    versioner.create_version(
-        prompt_id=prompt_id,
-        content="new content",
-        bump_type="invalid"
+    # This might fail with invalid version string
+    versioner.save_version(
+        name="test",
+        system_prompt="Test",
+        user_prompt="Test",
+        version="invalid-version-string"
     )
-except InvalidBumpTypeError as e:
-    print(f"Invalid bump type: {e}")
+except ValueError as e:
+    print(f"Invalid version format: {e}")
 ```
-
-## Performance Considerations
-
-### Batch Operations
-
-```python
-# Batch create prompts
-prompt_data = [
-    {
-        "content": "Prompt 1: {variable}",
-        "variables": {"variable": "value1"},
-        "tags": ["batch1"]
-    },
-    {
-        "content": "Prompt 2: {variable}",
-        "variables": {"variable": "value2"},
-        "tags": ["batch2"]
-    }
-]
-
-prompt_ids = versioner.batch_create_prompts(prompt_data)
-
-# Batch track metrics
 metrics_data = [
     {
         "prompt_id": prompt_ids[0],

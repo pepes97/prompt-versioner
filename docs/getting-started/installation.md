@@ -56,14 +56,19 @@ docker run -d \
 Verify your installation by checking the version:
 
 ```bash
+# Check CLI (if available)
 pv --version
+
+# Or check in Python
+python -c "import prompt_versioner; print('✅ Installed successfully!')"
 ```
 
 Or test the Python import:
 
 ```python
-import prompt_versioner
-print(prompt_versioner.__version__)
+from prompt_versioner import PromptVersioner, VersionBump
+pv = PromptVersioner(project_name="test", enable_git=False)
+print("✅ Prompt Versioner is working!")
 ```
 
 ## Optional Dependencies
@@ -103,7 +108,10 @@ You can specify a custom database location:
 from prompt_versioner import PromptVersioner
 
 # Custom database path
-versioner = PromptVersioner(db_path="/path/to/your/database.db")
+pv = PromptVersioner(
+    project_name="my-project",
+    db_path="/path/to/your/database.db"
+)
 ```
 
 ### Database Migration
@@ -115,15 +123,13 @@ If you're upgrading from an older version, the database schema will be automatic
 You can configure Prompt Versioner using environment variables:
 
 ```bash
-# Database path
+# Project configuration
+export PROMPT_VERSIONER_PROJECT="my-project"
 export PROMPT_VERSIONER_DB_PATH="/path/to/database.db"
 
-# Default Git repository path
+# Git integration
+export PROMPT_VERSIONER_ENABLE_GIT="true"
 export PROMPT_VERSIONER_GIT_REPO="/path/to/git/repo"
-
-# Web dashboard host and port
-export PROMPT_VERSIONER_HOST="0.0.0.0"
-export PROMPT_VERSIONER_PORT="5000"
 
 # OpenAI API key for examples
 export OPENAI_API_KEY="your-openai-api-key"
@@ -177,9 +183,10 @@ chmod 755 /path/to/database/directory
 
 If port 5000 is already in use for the web dashboard:
 
-```bash
-# Use a different port
-prompt-dashboard --port 8080
+```python
+# Use a different port programmatically
+pv = PromptVersioner(project_name="my-project")
+# pv.start_dashboard(port=8080)  # If dashboard available
 ```
 
 ### Getting Help
@@ -197,4 +204,5 @@ Now that you have Prompt Versioner installed, check out:
 
 - [Quick Start Guide](quick-start.md) - Get up and running in minutes
 - [Configuration](configuration.md) - Customize your setup
-- [Core Concepts](../user-guide/core-concepts.md) - Understand the fundamentals
+- [Basic Usage](../examples/basic-usage.md) - Learn with practical examples
+- [Version Management](../user-guide/version-management.md) - Understand version control

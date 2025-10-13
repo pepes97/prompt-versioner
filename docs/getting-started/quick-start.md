@@ -7,21 +7,21 @@ Get up and running with **Prompt Versioner** in just a few minutes! This guide w
 Let's start by creating and versioning your first prompt:
 
 ```python
-from prompt_versioner import PromptVersioner
+from prompt_versioner import PromptVersioner, VersionBump
 
 # Initialize the versioner
-versioner = PromptVersioner(db_path="my_prompts.db")
+pv = PromptVersioner(project_name="my-first-project", enable_git=False)
 
-# Create your first prompt
-prompt_id = versioner.save_prompt(
-    content="You are a helpful assistant. Please answer the following question: {question}",
-    variables={"question": "What is machine learning?"},
-    tags=["assistant", "education", "ml"],
-    description="Basic educational assistant prompt"
+# Create your first prompt version
+pv.save_version(
+    name="assistant",
+    system_prompt="You are a helpful assistant.",
+    user_prompt="Please answer the following question: {question}",
+    bump_type=VersionBump.MAJOR,
+    metadata={"created_for": "education", "type": "assistant"}
 )
 
-print(f"Created prompt with ID: {prompt_id}")
-# Output: Created prompt with ID: 550e8400-e29b-41d4-a716-446655440000
+print("✅ Created first prompt version 1.0.0!")
 ```
 
 ## 📝 Creating Versions
@@ -30,15 +30,15 @@ Now let's improve the prompt and create a new version:
 
 ```python
 # Create an improved version
-new_version = versioner.create_version(
-    prompt_id=prompt_id,
-    content="You are an expert AI tutor. Please provide a comprehensive answer to: {question}",
-    bump_type="minor",  # MAJOR, MINOR, or PATCH
-    description="Enhanced prompt with expert persona"
+pv.save_version(
+    name="assistant",
+    system_prompt="You are an expert AI tutor with deep knowledge.",
+    user_prompt="Please provide a comprehensive answer to: {question}",
+    bump_type=VersionBump.MINOR,  # Creates 1.1.0
+    metadata={"improvement": "enhanced with expert persona"}
 )
 
-print(f"Created version: {new_version}")
-# Output: Created version: 1.1.0
+print("✅ Created version 1.1.0!")
 ```
 
 ## 📊 Tracking Metrics
@@ -46,20 +46,20 @@ print(f"Created version: {new_version}")
 Track the performance of your prompts:
 
 ```python
-# Simulate an LLM call and track metrics
-versioner.track_metrics(
-    prompt_id=prompt_id,
+# Log performance metrics after using a prompt
+pv.log_metrics(
+    name="assistant",
     version="1.1.0",
-    llm_response="Machine learning is a subset of artificial intelligence...",
+    model_name="gpt-4o-mini",
     input_tokens=25,
     output_tokens=150,
-    latency=2.3,  # seconds
-    cost=0.004,   # USD
+    latency_ms=2300,  # milliseconds
     quality_score=0.85,  # 0-1 scale
-    metadata={"model": "gpt-4", "temperature": 0.7}
+    success=True,
+    metadata={"model": "gpt-4o-mini", "temperature": 0.7}
 )
 
-print("Metrics tracked successfully!")
+print("📊 Metrics tracked successfully!")
 ```
 
 ## 🔍 Retrieving and Using Prompts
@@ -68,21 +68,19 @@ Get prompts and their versions for use:
 
 ```python
 # Get the latest version of a prompt
-prompt_data = versioner.get_prompt(prompt_id)
-print(f"Latest version: {prompt_data['current_version']}")
-print(f"Content: {prompt_data['content']}")
+latest = pv.get_latest("assistant")
+print(f"Latest version: {latest['version']}")
+print(f"System prompt: {latest['system_prompt']}")
+print(f"User prompt: {latest['user_prompt']}")
 
 # Get a specific version
-v1_prompt = versioner.get_prompt_version(prompt_id, "1.0.0")
-print(f"V1.0.0 content: {v1_prompt['content']}")
+v1_prompt = pv.get_version("assistant", "1.0.0")
+print(f"V1.0.0 system prompt: {v1_prompt['system_prompt']}")
 
-# Render prompt with variables
-rendered = versioner.render_prompt(
-    prompt_id=prompt_id,
-    version="1.1.0",
-    variables={"question": "What is deep learning?"}
-)
-print(f"Rendered: {rendered}")
+# List all versions
+versions = pv.list_versions("assistant")
+for v in versions:
+    print(f"  v{v['version']} - {v['timestamp']}")
 ```
 
 ## 🧪 Basic A/B Testing
@@ -90,37 +88,33 @@ print(f"Rendered: {rendered}")
 Compare two prompt versions:
 
 ```python
-from prompt_versioner.testing import ABTest
+from prompt_versioner import ABTest
 
 # Create an A/B test
 ab_test = ABTest(
-    name="Education Assistant Improvement",
-    description="Testing expert vs. basic assistant persona",
-    versioner=versioner
+    versioner=pv,
+    prompt_name="assistant",
+    version_a="1.0.0",  # Basic version
+    version_b="1.1.0",  # Expert version
+    metric_name="quality_score"
 )
 
-# Add test variants
-ab_test.add_variant(
-    name="basic",
-    prompt_id=prompt_id,
-    version="1.0.0",
-    traffic_percentage=50
-)
+# Simulate test results
+for i in range(20):
+    # Version A results (basic)
+    score_a = 0.7 + (i * 0.01)  # Gradual improvement
+    ab_test.log_result("a", score_a)
 
-ab_test.add_variant(
-    name="expert",
-    prompt_id=prompt_id,
-    version="1.1.0",
-    traffic_percentage=50
-)
+    # Version B results (expert)
+    score_b = 0.8 + (i * 0.01)  # Better performance
+    ab_test.log_result("b", score_b)
 
-# Start the test
-test_id = ab_test.start()
-print(f"A/B test started with ID: {test_id}")
-
-# Get a variant for testing
-variant = ab_test.get_variant()
-print(f"Selected variant: {variant['name']} (v{variant['version']})")
+# Get results when ready
+if ab_test.is_ready(min_samples=15):
+    result = ab_test.get_result()
+    print(f"🏆 Winner: Version {result.winner}")
+    print(f"📈 Improvement: {result.improvement:.1f}%")
+    ab_test.print_result()
 ```
 
 ## 📱 Web Dashboard
@@ -128,11 +122,11 @@ print(f"Selected variant: {variant['name']} (v{variant['version']})")
 Launch the interactive web dashboard to visualize your prompts:
 
 ```bash
-# Start the dashboard
-prompt-dashboard
+# Start the dashboard (if available)
+pv dashboard
 
-# Or specify custom host/port
-prompt-dashboard --host 0.0.0.0 --port 8080
+# Or start programmatically
+pv.start_dashboard(host="0.0.0.0", port=5000)
 ```
 
 Then open your browser to `http://localhost:5000` to see:
@@ -148,23 +142,23 @@ Then open your browser to `http://localhost:5000` to see:
 Use the command-line interface for quick operations:
 
 ```bash
-# Initialize a new prompt database
-pv init --db-path ./prompts.db
+# Initialize a new project
+pv init my-project
 
 # List all prompts
-pv prompts list
+pv list
 
 # Show prompt details
-pv prompts show <prompt-id>
+pv show <prompt-name>
 
-# Create a new version
-pv prompts version <prompt-id> --bump minor --description "Improved version"
+# Compare versions
+pv diff <prompt-name> 1.0.0 1.1.0
 
 # Export prompts
-pv export --output prompts_backup.json
+pv export <prompt-name> --output backup.json
 
-# Show metrics for a prompt
-pv metrics show <prompt-id> --version 1.1.0
+# Show metrics
+pv metrics <prompt-name> --version 1.1.0
 ```
 
 ## 📈 Advanced Example: Complete Workflow
@@ -172,72 +166,60 @@ pv metrics show <prompt-id> --version 1.1.0
 Here's a complete example showing a typical workflow:
 
 ```python
-from prompt_versioner import PromptVersioner
-from prompt_versioner.testing import ABTest
-import openai
+from prompt_versioner import PromptVersioner, VersionBump
+import time
 
 # Initialize
-versioner = PromptVersioner(db_path="production_prompts.db")
-client = openai.OpenAI()
+pv = PromptVersioner(project_name="customer-support", enable_git=False)
 
 # Create base prompt
-prompt_id = versioner.save_prompt(
-    content="System: {system_role}\n\nUser: {user_input}\n\nAssistant:",
-    variables={
-        "system_role": "You are a helpful customer service agent.",
-        "user_input": "I need help with my order."
-    },
-    tags=["customer-service", "support"],
-    description="Customer service base prompt"
+pv.save_version(
+    name="support_agent",
+    system_prompt="You are a helpful customer service agent.",
+    user_prompt="Customer issue: {issue}\n\nPlease provide assistance:",
+    bump_type=VersionBump.MAJOR,
+    metadata={"type": "customer-service", "initial": True}
 )
 
 # Test and iterate
-for i, improvement in enumerate([
+improvements = [
     "You are a helpful and empathetic customer service agent.",
     "You are a helpful, empathetic, and knowledgeable customer service agent.",
     "You are a professional customer service specialist who provides helpful, empathetic, and accurate assistance."
-], 1):
+]
 
+for i, system_prompt in enumerate(improvements, 1):
     # Create improved version
-    version = versioner.create_version(
-        prompt_id=prompt_id,
-        content=f"System: {improvement}\n\nUser: {{user_input}}\n\nAssistant:",
-        bump_type="minor",
-        description=f"Iteration {i}: Enhanced agent persona"
+    pv.save_version(
+        name="support_agent",
+        system_prompt=system_prompt,
+        user_prompt="Customer issue: {issue}\n\nPlease provide step-by-step assistance:",
+        bump_type=VersionBump.MINOR,
+        metadata={"iteration": i, "improvement": "enhanced persona"}
     )
 
-    # Simulate testing with real LLM
-    test_input = "I need help with my order."
-    rendered_prompt = versioner.render_prompt(
-        prompt_id=prompt_id,
-        version=version,
-        variables={"user_input": test_input}
-    )
+    # Simulate testing and log metrics
+    for test_round in range(5):
+        pv.log_metrics(
+            name="support_agent",
+            version=f"1.{i}.0",
+            model_name="gpt-4o-mini",
+            input_tokens=50 + (i * 5),
+            output_tokens=120 + (i * 10),
+            latency_ms=1200 + (test_round * 100),
+            cost_eur=0.002 + (i * 0.001),
+            quality_score=0.7 + (i * 0.05) + (test_round * 0.01),
+            success=True,
+            metadata={"iteration": i, "test_round": test_round}
+        )
 
-    # Make LLM call (example)
-    response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": rendered_prompt}],
-        max_tokens=150
-    )
+    print(f"✅ Completed iteration {i} with version 1.{i}.0")
 
-    # Track metrics
-    versioner.track_metrics(
-        prompt_id=prompt_id,
-        version=version,
-        llm_response=response.choices[0].message.content,
-        input_tokens=response.usage.prompt_tokens,
-        output_tokens=response.usage.completion_tokens,
-        latency=1.2,  # You would measure this
-        cost=0.002,   # Calculate based on pricing
-        quality_score=0.8 + (i * 0.05),  # Simulated improvement
-        metadata={
-            "model": "gpt-3.5-turbo",
-            "test_iteration": i
-        }
-    )
+# Compare performance
+latest = pv.get_latest("support_agent")
+print(f"🎉 Final version: {latest['version']}")
 
-print("Workflow completed! Check the dashboard for results.")
+print("📊 Workflow completed! Check metrics with pv.get_version() for analysis.")
 ```
 
 ## 🎯 What's Next?

@@ -1,61 +1,129 @@
 # Basic Usage
 
-This guide covers the fundamental usage patterns of **Prompt Versioner** with practical, real-world examples.
+Get started with **Prompt Versioner** - learn the fundamentals through practical examples.
 
-## 🚀 Getting Started
-
-### Simple Prompt Creation
+## 🚀 Quick Start
 
 ```python
-from prompt_versioner import PromptVersioner
+from prompt_versioner import PromptVersioner, VersionBump
 
 # Initialize versioner
-versioner = PromptVersioner(db_path="my_prompts.db")
+pv = PromptVersioner(project_name="my-first-project", enable_git=False)
 
-# Create your first prompt
-prompt_id = versioner.save_prompt(
-    content="You are a helpful assistant. Please answer this question: {question}",
-    variables={"question": "What is artificial intelligence?"},
-    tags=["assistant", "general", "educational"],
-    description="General purpose Q&A assistant"
+# Save your first prompt version
+pv.save_version(
+    name="assistant",
+    system_prompt="You are a helpful AI assistant.",
+    user_prompt="Please help me with: {query}",
+    bump_type=VersionBump.MAJOR,  # Creates v1.0.0
 )
 
-print(f"Created prompt: {prompt_id}")
+print("🎉 Your first prompt version is saved!")
 ```
 
-### Basic Version Management
+## 📝 Creating Versions
+
+### Your First Versions
 
 ```python
-# Improve the prompt - create a minor version
-v1_1 = versioner.create_version(
-    prompt_id=prompt_id,
-    content="You are a knowledgeable AI assistant. Please provide a detailed answer to: {question}",
-    bump_type="minor",
-    description="Enhanced with 'knowledgeable' and 'detailed' instructions"
+from prompt_versioner import PromptVersioner, VersionBump
+
+# Initialize
+pv = PromptVersioner(project_name="learning-prompts", enable_git=False)
+
+# Create initial version
+pv.save_version(
+    name="email_writer",
+    system_prompt="You are a professional email writing assistant.",
+    user_prompt="Write a professional email about: {topic}",
+    bump_type=VersionBump.MAJOR,  # Creates 1.0.0
+    metadata={"type": "email", "author": "me"}
 )
 
-print(f"Created version: {v1_1}")  # Output: 1.1.0
-
-# Create a major revision with different structure
-v2_0 = versioner.create_version(
-    prompt_id=prompt_id,
-    content="""Role: You are an expert AI assistant with deep knowledge across multiple domains.
-
-Task: Answer the following question with accuracy and clarity.
-
-Question: {question}
-
-Requirements:
-- Provide factual, well-reasoned answers
-- Include relevant examples when helpful
-- Acknowledge uncertainty when appropriate
-
-Response:""",
-    bump_type="major",
-    description="Restructured with clear role, task, and requirements sections"
+# Improve the prompt
+pv.save_version(
+    name="email_writer",
+    system_prompt="You are a professional email writing assistant. Always be polite and concise.",
+    user_prompt="Write a professional, polite email about: {topic}\n\nKeep it concise and friendly.",
+    bump_type=VersionBump.MINOR,  # Creates 1.1.0
+    metadata={"improvement": "added politeness and conciseness"}
 )
 
-print(f"Created major version: {v2_0}")  # Output: 2.0.0
+# Fix a typo
+pv.save_version(
+    name="email_writer",
+    system_prompt="You are a professional email writing assistant. Always be polite and concise.",
+    user_prompt="Write a professional, polite email about: {topic}\n\nKeep it concise and friendly.",  # Fixed typo
+    bump_type=VersionBump.PATCH,  # Creates 1.1.1
+    metadata={"fix": "typo correction"}
+)
+
+print("✅ Created 3 versions: 1.0.0, 1.1.0, 1.1.1")
+```
+
+### Version Types Explained
+
+```python
+# MAJOR version (1.0.0 → 2.0.0) - Breaking changes
+pv.save_version(
+    name="translator",
+    system_prompt="You are a language translator.",
+    user_prompt="Translate to {language}: {text}",
+    bump_type=VersionBump.MAJOR
+)
+
+# MINOR version (2.0.0 → 2.1.0) - New features
+pv.save_version(
+    name="translator",
+    system_prompt="You are a language translator. Provide context when helpful.",
+    user_prompt="Translate to {language}: {text}\n\nProvide brief context if the translation might be ambiguous.",
+    bump_type=VersionBump.MINOR
+)
+
+# PATCH version (2.1.0 → 2.1.1) - Small fixes
+pv.save_version(
+    name="translator",
+    system_prompt="You are a language translator. Provide context when helpful.",
+    user_prompt="Translate to {language}: {text}\n\nProvide brief context if the translation might be ambiguous.",
+    bump_type=VersionBump.PATCH
+```
+
+## 🔍 Working with Versions
+
+### Getting Your Versions
+
+```python
+# Get the latest version
+latest = pv.get_latest("email_writer")
+print(f"Latest version: {latest['version']}")
+print(f"System prompt: {latest['system_prompt']}")
+print(f"User prompt: {latest['user_prompt']}")
+
+# Get a specific version
+version_1_0 = pv.get_version("email_writer", "1.0.0")
+print(f"Version 1.0.0 system prompt: {version_1_0['system_prompt']}")
+
+# List all versions (newest first)
+versions = pv.list_versions("email_writer")
+print(f"All versions:")
+for v in versions:
+    print(f"  v{v['version']} - {v['timestamp']}")
+
+# List all your prompts
+all_prompts = pv.list_prompts()
+print(f"All prompts: {all_prompts}")
+```
+
+### Comparing Versions
+
+```python
+# See what changed between versions
+diff = pv.diff("email_writer", "1.0.0", "1.1.0", format_output=True)
+# This will print a formatted diff showing the changes
+
+# Get diff details
+print(f"Changes summary: {diff.summary}")
+print(f"Number of changes: {len(diff.changes)}")
 ```
 
 ## 📊 Tracking Performance
@@ -63,52 +131,317 @@ print(f"Created major version: {v2_0}")  # Output: 2.0.0
 ### Basic Metrics Tracking
 
 ```python
+# Log performance metrics after using a prompt
+pv.log_metrics(
+    name="email_writer",
+    version="1.1.0",
+    model_name="gpt-4o-mini",
+    input_tokens=50,
+    output_tokens=120,
+    latency_ms=340,
+    quality_score=0.9,  # Your assessment (0.0 to 1.0)
+    success=True
+)
+
+print("📊 Metrics logged!")
+
+# Check how many metrics you have
+version_data = pv.get_version("email_writer", "1.1.0")
+metrics = pv.storage.get_metrics(version_id=version_data["id"])
+print(f"Total metrics recorded: {len(metrics)}")
+```
+
+### Understanding Your Performance
+
+```python
+def analyze_prompt_performance(pv, prompt_name, version):
+    """Simple performance analysis"""
+
+    # Get the version and its metrics
+    version_data = pv.get_version(prompt_name, version)
+    metrics = pv.storage.get_metrics(version_id=version_data["id"])
+
+    if not metrics:
+        print("No metrics found for this version")
+        return
+
+    # Calculate averages
+    total_calls = len(metrics)
+    avg_quality = sum(m.get("quality_score", 0) for m in metrics) / total_calls
+    avg_latency = sum(m.get("latency_ms", 0) for m in metrics) / total_calls
+    success_rate = sum(1 for m in metrics if m.get("success", True)) / total_calls
+    total_cost = sum(m.get("cost_eur", 0) for m in metrics)
+
+    print(f"📈 Performance for {prompt_name} v{version}:")
+    print(f"  Total calls: {total_calls}")
+    print(f"  Average quality: {avg_quality:.2f}")
+    print(f"  Average latency: {avg_latency:.1f}ms")
+    print(f"  Success rate: {success_rate:.1%}")
+    print(f"  Total cost: €{total_cost:.4f}")
+
+# Analyze your prompt
+analyze_prompt_performance(pv, "email_writer", "1.1.0")
+```
+
+## 🧪 Simple A/B Testing
+
+### Compare Two Versions
+
+```python
+from prompt_versioner import ABTest
+import random
+
+# Create an A/B test
+ab_test = ABTest(
+    versioner=pv,
+    prompt_name="email_writer",
+    version_a="1.0.0",  # Original version
+    version_b="1.1.0",  # Improved version
+    metric_name="quality_score"
+)
+
+# Simulate some test results
+print("🧪 Running A/B test simulation...")
+
+# Version A results (original)
+for i in range(15):
+    score = random.uniform(0.7, 0.85)  # Slightly lower performance
+    ab_test.log_result("a", score)
+
+# Version B results (improved)
+for i in range(15):
+    score = random.uniform(0.8, 0.95)  # Better performance
+    ab_test.log_result("b", score)
+
+# Get results
+if ab_test.is_ready(min_samples=10):
+    result = ab_test.get_result()
+    print(f"🏆 Winner: Version {result.winner}")
+    print(f"📈 Improvement: {result.improvement:.1f}%")
+    print(f"🎯 Confidence: {result.confidence:.1%}")
+
+    # Print detailed report
+    ab_test.print_result()
+else:
+    print("Need more test data")
+```
+
+## 📁 Saving and Sharing
+
+### Export Your Prompts
+
+```python
+from pathlib import Path
+
+# Export a single prompt with all versions
+pv.export_prompt(
+    name="email_writer",
+    output_file=Path("email_writer_backup.json"),
+    format="json",
+    include_metrics=True
+)
+
+print("💾 Exported email_writer to backup file")
+
+# Export all prompts
+pv.export_all(
+    output_dir=Path("all_prompts_backup"),
+    format="json"
+)
+
+print("💾 Exported all prompts to backup folder")
+```
+
+### Import Prompts
+
+```python
+# Import prompts from a file
+result = pv.import_prompt(
+    input_file=Path("email_writer_backup.json"),
+    overwrite=False  # Don't overwrite existing versions
+)
+
+print(f"📥 Import results:")
+print(f"  Prompt: {result['prompt_name']}")
+print(f"  Imported: {result['imported']} versions")
+print(f"  Skipped: {result['skipped']} versions")
+```
+
+## 🏷️ Adding Notes
+
+### Document Your Changes
+
+```python
+# Add notes to document your changes
+pv.add_annotation(
+    name="email_writer",
+    version="1.1.0",
+    text="Added politeness instructions. Tested with 20 examples, quality improved by 12%.",
+    author="me"
+)
+
+# Add another note
+pv.add_annotation(
+    name="email_writer",
+    version="1.1.0",
+    text="Works especially well for business communications and customer service emails.",
+    author="me"
+)
+
+# Read your notes
+annotations = pv.get_annotations("email_writer", "1.1.0")
+print(f"📝 Notes for email_writer v1.1.0:")
+for note in annotations:
+    print(f"  {note['author']}: {note['text']}")
+```
+
+## 🧹 Clean Up
+
+### Delete Versions You Don't Need
+
+```python
+# Delete a specific version (be careful!)
+success = pv.delete_version("email_writer", "1.0.0")
+if success:
+    print("🗑️ Deleted version 1.0.0")
+
+# Delete an entire prompt (use with caution!)
+# success = pv.delete_prompt("old_prompt_name")
+```
+
+## 🎯 Real-World Example
+
+### Complete Workflow
+
+```python
+from prompt_versioner import PromptVersioner, VersionBump
+import random
 import time
-import openai
 
-# Simulate LLM usage with metrics tracking
-def use_prompt_with_tracking(prompt_id, version, user_question):
-    # Render the prompt
-    rendered = versioner.render_prompt(
-        prompt_id=prompt_id,
-        version=version,
-        variables={"question": user_question}
+# 1. Initialize for your project
+pv = PromptVersioner(project_name="customer-support-ai", enable_git=False)
+
+# 2. Create your first prompt
+pv.save_version(
+    name="support_assistant",
+    system_prompt="You are a helpful customer support assistant.",
+    user_prompt="Help the customer with: {issue}",
+    bump_type=VersionBump.MAJOR,
+    metadata={"created_for": "customer support team", "initial_version": True}
+)
+
+# 3. Test it and log performance
+for i in range(10):
+    # Simulate using the prompt
+    quality = random.uniform(0.75, 0.9)
+    latency = random.uniform(300, 600)
+
+    pv.log_metrics(
+        name="support_assistant",
+        version="1.0.0",
+        model_name="gpt-4o-mini",
+        input_tokens=random.randint(80, 150),
+        output_tokens=random.randint(100, 200),
+        latency_ms=latency,
+        quality_score=quality,
+        success=True,
+        metadata={"test_round": i+1}
     )
 
-    # Simulate LLM call (replace with your actual LLM)
-    start_time = time.time()
+# 4. Analyze performance
+def get_performance_summary(pv, prompt_name, version):
+    version_data = pv.get_version(prompt_name, version)
+    metrics = pv.storage.get_metrics(version_id=version_data["id"])
 
-    # Example with OpenAI
-    client = openai.OpenAI()
-    response = client.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": rendered}],
-        max_tokens=200
+    avg_quality = sum(m.get("quality_score", 0) for m in metrics) / len(metrics)
+    avg_latency = sum(m.get("latency_ms", 0) for m in metrics) / len(metrics)
+
+    return {"quality": avg_quality, "latency": avg_latency, "samples": len(metrics)}
+
+perf = get_performance_summary(pv, "support_assistant", "1.0.0")
+print(f"📊 Initial performance: Quality={perf['quality']:.2f}, Latency={perf['latency']:.0f}ms")
+
+# 5. Improve the prompt based on results
+pv.save_version(
+    name="support_assistant",
+    system_prompt="You are a helpful and empathetic customer support assistant. Always acknowledge the customer's concern first.",
+    user_prompt="The customer has this issue: {issue}\n\nPlease help them solve it step by step.",
+    bump_type=VersionBump.MINOR,
+    metadata={"improvement": "added empathy and structure", "based_on_testing": True}
+)
+
+# 6. Document the improvement
+pv.add_annotation(
+    name="support_assistant",
+    version="1.1.0",
+    text="Added empathy and step-by-step structure based on initial testing. Expect improved customer satisfaction.",
+    author="me"
+)
+
+# 7. Test the improved version
+for i in range(10):
+    quality = random.uniform(0.85, 0.95)  # Better performance
+    latency = random.uniform(280, 550)
+
+    pv.log_metrics(
+        name="support_assistant",
+        version="1.1.0",
+        model_name="gpt-4o-mini",
+        input_tokens=random.randint(90, 160),
+        output_tokens=random.randint(120, 220),
+        latency_ms=latency,
+        quality_score=quality,
+        success=True,
+        metadata={"test_round": i+1, "improved_version": True}
     )
 
-    end_time = time.time()
-    latency = end_time - start_time
+# 8. Compare versions
+new_perf = get_performance_summary(pv, "support_assistant", "1.1.0")
+print(f"📈 Improved performance: Quality={new_perf['quality']:.2f}, Latency={new_perf['latency']:.0f}ms")
 
-    # Track metrics
-    versioner.track_metrics(
-        prompt_id=prompt_id,
-        version=version,
-        llm_response=response.choices[0].message.content,
-        input_tokens=response.usage.prompt_tokens,
-        output_tokens=response.usage.completion_tokens,
-        latency=latency,
-        cost=calculate_openai_cost(response.usage),  # Your cost calculation
-        quality_score=0.85,  # Manual or automated assessment
-        metadata={
-            "model": "gpt-3.5-turbo",
-            "user_question": user_question,
-            "temperature": 0.7
-        }
-    )
+improvement = ((new_perf['quality'] - perf['quality']) / perf['quality']) * 100
+print(f"🎉 Quality improvement: {improvement:.1f}%")
 
-    return response.choices[0].message.content
+# 9. Export for backup
+pv.export_prompt(
+    name="support_assistant",
+    output_file=Path("support_assistant_backup.json"),
+    include_metrics=True
+)
 
-def calculate_openai_cost(usage):
+print("✅ Complete workflow finished!")
+```
+
+## 🎓 What You've Learned
+
+After completing these examples, you now know how to:
+
+- ✅ Create and manage prompt versions
+- ✅ Track performance with metrics
+- ✅ Compare versions to see improvements
+- ✅ Run simple A/B tests
+- ✅ Export and import prompts
+- ✅ Add documentation with annotations
+- ✅ Analyze your prompt performance
+
+## 📚 Next Steps
+
+Ready to learn more advanced features?
+
+- [Version Management](../user-guide/version-management.md) - Advanced version control techniques
+- [Metrics Tracking](../user-guide/metrics-tracking.md) - Comprehensive performance monitoring
+- [A/B Testing](../user-guide/ab-testing.md) - Scientific prompt optimization
+- [Performance Monitoring](../user-guide/performance-monitoring.md) - Monitor your prompts in production
+
+## 💡 Tips for Success
+
+1. **Start Small**: Begin with simple prompts and basic metrics
+2. **Be Consistent**: Use consistent naming and versioning practices
+3. **Document Everything**: Add annotations to explain your changes
+4. **Test Regularly**: Use metrics and A/B testing to validate improvements
+5. **Export Regularly**: Keep backups of your important prompts
+
+Happy prompt versioning! 🚀
     # Example cost calculation for GPT-3.5-turbo
     input_cost = usage.prompt_tokens * 0.0015 / 1000
     output_cost = usage.completion_tokens * 0.002 / 1000

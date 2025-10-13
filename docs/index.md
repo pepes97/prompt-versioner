@@ -48,35 +48,39 @@ pip install prompt-versioner
 ### Basic Usage
 
 ```python
-from prompt_versioner import PromptVersioner
+from prompt_versioner import PromptVersioner, VersionBump
 
 # Initialize the versioner
-versioner = PromptVersioner(db_path="prompts.db")
+versioner = PromptVersioner(project_name="my-app")
 
-# Save a prompt
-prompt_id = versioner.save_prompt(
-    content="You are a helpful assistant. Answer: {question}",
-    variables={"question": "What is AI?"},
-    tags=["assistant", "general"]
+# Save a prompt version
+version_id = versioner.save_version(
+    name="assistant",
+    system_prompt="You are a helpful AI assistant.",
+    user_prompt="Answer this question: {question}",
+    bump_type=VersionBump.MAJOR,  # Creates version 1.0.0
+    metadata={"type": "general_assistant"}
 )
 
 # Create a new version
-versioner.create_version(
-    prompt_id=prompt_id,
-    content="You are an expert AI assistant. Please answer: {question}",
-    bump_type="minor",
-    description="Improved prompt clarity"
+versioner.save_version(
+    name="assistant",
+    system_prompt="You are an expert AI assistant with deep knowledge.",
+    user_prompt="Please provide a detailed answer to: {question}",
+    bump_type=VersionBump.MINOR,  # Creates version 1.1.0
+    metadata={"improvement": "enhanced expertise"}
 )
 
 # Track metrics
-versioner.track_metrics(
-    prompt_id=prompt_id,
+versioner.log_metrics(
+    name="assistant",
     version="1.1.0",
-    llm_response="AI is artificial intelligence...",
+    model_name="gpt-4o",
     input_tokens=15,
     output_tokens=25,
-    latency=1.2,
-    cost=0.001
+    latency_ms=1200,
+    cost_eur=0.001,
+    quality_score=0.95
 )
 ```
 
@@ -85,7 +89,7 @@ versioner.track_metrics(
 Launch the interactive web dashboard:
 
 ```bash
-prompt-dashboard
+python examples/run_dashboard.py
 ```
 
 <div style="display: flex; justify-content: space-between; margin: 20px 0;">
