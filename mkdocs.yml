@@ -1,3 +1,4 @@
+site_dir: docs
 site_name: Prompt Versioner
 site_description: Comprehensive Python library for managing and versioning LLM prompts
 site_author: Sveva Pepe
