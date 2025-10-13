@@ -1,7 +1,7 @@
 <div align="center">
 
 
-<img src="docs/images/logo.svg" alt="Prompt Versioner Logo" width="200" height="200">
+<img src="docs/images/logo.svg" alt="Prompt Versioner Logo" width="250" height="250">
 
 **A comprehensive Python library for managing and versioning LLM prompts, with built-in A/B testing, metric tracking, and performance monitoring capabilities.**
 
