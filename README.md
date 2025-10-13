@@ -10,7 +10,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-[Features](#-features) • [Installation](#-installation) • [Quick Start](#-quick-start) • [Web Dashboard](#-web-dashboard) • [Documentation](##) • [Examples](#examples)
+[Features](#-features) • [Installation](#-installation) • [Quick Start](#-quick-start) • [Web Dashboard](#-web-dashboard) • [Examples](#-examples--use-cases) • [Documentation](##)
 
 </div>
 
@@ -105,9 +105,10 @@ pv dashboard --port 5000
 
 ### Basic Usage
 
+> 📁 **Complete example**: [`examples/basic_usage.py`](examples/basic_usage.py)
+
 ```python
-from prompt_versioner.core import PromptVersioner, VersionBump
-from prompt_versioner.testing import ABTest
+from prompt_versioner import PromptVersioner, VersionBump
 
 # Initialize versioner
 pv = PromptVersioner(project_name="my-ai-project", enable_git=False)
@@ -139,7 +140,6 @@ pv.log_metrics(
     output_tokens=250,
     latency_ms=450.5,
     quality_score=0.92,
-    cost_usd=0.0045,
     temperature=0.7,
     max_tokens=1000,
     success=True
@@ -149,6 +149,8 @@ print("📊 Metrics logged successfully!")
 ```
 
 ### Launch Web Dashboard
+
+> 📁 **Dashboard launcher**: [`examples/run_dashboard.py`](examples/run_dashboard.py)
 
 ```bash
 # Quick start - auto-detects database in current directory
@@ -222,41 +224,55 @@ Switch seamlessly between **Dark Mode** and **Light Mode** with full UI consiste
 
 ```bash
 # Initialize a new project
-pv init my-ai-project --enable-git
-
-# Save a new prompt version
-pv prompts save \
-  --name "summarizer" \
-  --system "You are a professional summarizer." \
-  --user "Summarize: {text}" \
-  --bump major \
-  --metadata '{"purpose": "content_summary"}'
+pv init
 
 # List all prompts
-pv prompts list --format table
+pv list
 
-# Show version history
-pv prompts history summarizer --limit 10
+# Show all versions of a specific prompt
+pv versions <prompt>
 
-# Compare two versions
-pv diff summarizer 1.0.0 1.1.0 --format side-by-side
+Example: pv versions clause_classifier
 
-# Export prompts for backup
-pv export --output prompts_backup.json --include-metrics
+# Show details of a specific version
+pv show <nome prompt> <version>
+
+Example: pv show clauses_classifier 1.0.0-SNAPSHOT
+
+# Compare two versions (shows diff)
+pv diff <nome prompt> <version 1> <version 2>
+
+# Compare versions with metrics
+pv compare <nome prompt> <version 1> <version 2>
+
+# Delete a specific version
+pv delete <nome prompt> <version>
+
+# Rollback to a previous version
+pv rollback <nome prompt> <version>
 ```
 
 ### Management Operations
 
 ```bash
-# Database operations
-pv manage clean-orphans      # Remove unused data
-pv manage backup             # Create database backup
-pv manage restore backup.db  # Restore from backup
-pv manage vacuum             # Optimize database
+# Launch web dashboard
+pv dashboard --port 5000
 
-# Advanced querying
-pv prompts search "code review" --metadata-filter "author=team"
-pv metrics query --prompt summarizer --model gpt-4o --date-range 7d
+# Git hooks management
+pv install-hooks    # Install Git hooks for automatic versioning
+pv uninstall-hooks  # Remove Git hooks
+
+# Auto-versioning (used by Git hooks)
+pv auto-version --pre-commit
+
+# Database management
+pv clear-db         # Clear all prompts and data from database
+pv clear-db --force # Clear database without confirmation
+
+# Standalone database cleaner (alternative)
+prompt-clear                    # Clear database (auto-detect)
+prompt-clear --force           # Clear without confirmation
+prompt-clear --db-path /path   # Clear specific database
 ```
 
 ---
@@ -265,7 +281,15 @@ pv metrics query --prompt summarizer --model gpt-4o --date-range 7d
 
 ### 1. Version Management
 
+> 📁 **Complete example**: [`examples/version_management.py`](examples/version_management.py)
+
 ```python
+from prompt_versioner import PromptVersioner, VersionBump
+
+# Initialize versioner
+pv = PromptVersioner(project_name="my-ai-project", enable_git=False)
+
+
 # Create versions with semantic versioning
 pv.save_version(
     name="summarizer",
@@ -278,15 +302,45 @@ pv.save_version(
 # List all versions
 versions = pv.list_versions("summarizer")
 for v in versions:
-    print(f"Version {v['version']}: {v['created_at']}")
+    print(f"Version {v['version']}: {v['timestamp']}")
 
 # Get specific version
 version_1_0 = pv.get_version("summarizer", "1.0.0")
+
+print(f"Retrieved version: {version_1_0['version']} with prompt, User Prompt:\n{version_1_0['user_prompt']}")
 ```
 
 ### 2. Metrics Tracking
 
+> 📁 **Complete example**: [`examples/metrics_tracking.py`](examples/metrics_tracking.py)
+
 ```python
+from prompt_versioner import PromptVersioner, VersionBump
+
+# Initialize versioner
+pv = PromptVersioner(project_name="my-ai-project", enable_git=False)
+
+
+# Create versions with semantic versioning
+pv.save_version(
+    name="summarizer",
+    system_prompt="You are a skilled summarization assistant.",
+    user_prompt="Summarize the following text:\n{text}",
+    bump_type=VersionBump.MAJOR,  # MAJOR, MINOR, or PATCH
+    metadata={"type": "summarization", "improvement": "better context"}
+)
+
+# List all versions
+versions = pv.list_versions("summarizer")
+for v in versions:
+    print(f"Version {v['version']}: {v['timestamp']}")
+
+# Get specific version
+version_1_0 = pv.get_version("summarizer", "1.0.0")
+
+print(f"✅ Retrieved version: {version_1_0['version']} with prompt, User Prompt:\n{version_1_0['user_prompt']}")
+
+
 # Log comprehensive metrics
 pv.log_metrics(
     name="summarizer",
@@ -296,80 +350,234 @@ pv.log_metrics(
     output_tokens=75,
     latency_ms=420.5,
     quality_score=0.95,
-    cost_usd=0.003,
     temperature=0.7,
     max_tokens=500,
     success=True,
-    custom_metadata={"user_feedback": "excellent", "domain": "tech_news"}
+    metadata={"user_feedback": "excellent", "domain": "tech_news"}
 )
 
 # Query metrics
-metrics = pv.get_metrics("summarizer", version="1.0.0", limit=100)
+v = pv.get_version("summarizer", "1.0.0")
+metrics = pv.storage.get_metrics(version_id=v["id"], limit=100)
 avg_quality = sum(m['quality_score'] for m in metrics) / len(metrics)
 print(f"📊 Average quality score: {avg_quality:.2f}")
 ```
 
 ### 3. A/B Testing Framework
 
+> 📁 **Complete example**: [`examples/ab_testing.py`](examples/ab_testing.py)
+
 ```python
 from prompt_versioner.testing import ABTest
 
 # Create an A/B test
 ab_test = ABTest(
-    name="summarizer_comparison",
+    versioner=pv,
     prompt_name="summarizer",
     version_a="1.0.0",
     version_b="1.1.0",
-    traffic_split=0.5,  # 50/50 split
-    success_metric="quality_score",
-    minimum_sample_size=100
+    metric_name="quality_score"
 )
 
-# Run the test (in your application loop)
-test_version = ab_test.get_version_for_request(user_id="user123")
-result = your_llm_call(version=test_version, input_text="...")
+# Simulate A/B test results in your application loop
+for i in range(50):
+    # Version A results (baseline)
+    quality_a = simulate_llm_call_quality()  # Your LLM call here
+    ab_test.log_result("a", quality_a)
 
-# Log test results
-ab_test.log_result(
-    user_id="user123",
-    version=test_version,
-    success_metric_value=0.92,
-    additional_metrics={"latency_ms": 380}
-)
+    # Version B results (challenger)
+    quality_b = simulate_llm_call_quality()  # Your LLM call here
+    ab_test.log_result("b", quality_b)
 
-# Check if test is complete
-if ab_test.is_statistically_significant():
-    winner = ab_test.get_winner()
-    print(f"🏆 Winner: Version {winner['version']} (p-value: {winner['p_value']:.4f})")
+# Check if test has enough samples
+if ab_test.is_ready(min_samples=30):
+    result = ab_test.get_result()
+    print(f"🏆 Winner: {result.winner}")
+    print(f"📈 Improvement: {result.improvement:.2f}%")
+    print(f"🎯 Confidence: {result.confidence:.1%}")
+
+    # Print detailed analysis
+    ab_test.print_result()
+else:
+    count_a, count_b = ab_test.get_sample_counts()
+    print(f"⚠️  Need more samples: A={count_a}, B={count_b}")
 ```
 
 ### 4. Performance Monitoring
 
-```python
-from prompt_versioner.monitoring import PerformanceMonitor
+> 📁 **Complete example**: [`examples/performance_monitoring.py`](examples/performance_monitoring.py)
 
-# Set up automated monitoring
-monitor = PerformanceMonitor(
-    versioner=pv,
-    alert_thresholds={
-        "quality_score": {"min": 0.8, "trend_window": 50},
-        "latency_ms": {"max": 1000, "trend_window": 20},
-        "cost_usd": {"max": 0.01, "daily_budget": 10.0},
-        "success_rate": {"min": 0.95}
-    }
+```python
+from prompt_versioner import PerformanceMonitor, PromptVersioner, VersionBump
+import random
+
+pv = PromptVersioner(project_name="my-ai-project", enable_git=False)
+
+print("🚀 Creating test data for performance monitoring...")
+
+# 1. Create a prompt with baseline version
+print("\n📝 Creating baseline version...")
+pv.save_version(
+    name="test_classifier",
+    system_prompt="You are an expert text classifier.",
+    user_prompt="Classify this text: {text}",
+    bump_type=VersionBump.MAJOR,
+    metadata={"version_type": "baseline", "author": "team"}
 )
 
-# Monitor runs automatically - check alerts
-alerts = monitor.check_alerts("summarizer")
-for alert in alerts:
-    print(f"⚠️  {alert['type']}: {alert['message']}")
+baseline_version = pv.get_latest("test_classifier")
+print(f"✅ Created baseline version: {baseline_version['version']}")
+
+# 2. Log baseline metrics (good performance)
+print("📊 Logging baseline metrics...")
+for i in range(20):
+    pv.log_metrics(
+        name="test_classifier",
+        version=baseline_version["version"],
+        model_name="gpt-4o",
+        input_tokens=random.randint(100, 200),
+        output_tokens=random.randint(20, 50),
+        latency_ms=random.uniform(300, 500),  # Good latency
+        quality_score=random.uniform(0.85, 0.95),  # Good quality
+        success=True,
+        temperature=0.7,
+        max_tokens=100
+    )
+
+print(f"✅ Logged {20} baseline metrics")
+
+# 3. Create new version with worse performance
+print("\n📝 Creating new version with performance issues...")
+pv.save_version(
+    name="test_classifier",
+    system_prompt="You are an expert text classifier with detailed analysis capabilities.",
+    user_prompt="Classify this text with detailed reasoning: {text}\n\nProvide classification and explanation:",
+    bump_type=VersionBump.MINOR,
+    metadata={"version_type": "detailed", "author": "team", "change": "added detailed reasoning"}
+)
+
+current_version = pv.get_latest("test_classifier")
+print(f"✅ Created current version: {current_version['version']}")
+
+# 4. Log worse metrics for new version
+print("📊 Logging current metrics (with regressions)...")
+for i in range(20):
+    pv.log_metrics(
+        name="test_classifier",
+        version=current_version["version"],
+        model_name="gpt-4o",
+        input_tokens=random.randint(150, 300),  # More tokens
+        output_tokens=random.randint(80, 150),  # Much more output
+        latency_ms=random.uniform(600, 900),   # Worse latency (30%+ increase)
+        quality_score=random.uniform(0.70, 0.85),  # Worse quality (10%+ decrease)
+        success=random.choice([True] * 18 + [False] * 2),  # Some failures
+        temperature=0.7,
+        max_tokens=200
+    )
+
+print(f"✅ Logged {20} current metrics with regressions")
+
+print("\n" + "="*60)
+print("🔍 PERFORMANCE MONITORING TEST")
+print("="*60)
+
+# Set up automated monitoring
+monitor = PerformanceMonitor(versioner=pv)
+
+# Check if we have enough prompts and versions to test
+prompts = pv.list_prompts()
+print(f"📊 Found {len(prompts)} prompts: {prompts}")
+
+if prompts:
+    prompt_name = "test_classifier"
+    versions = pv.list_versions(prompt_name)
+    print(f"📋 Found {len(versions)} versions for '{prompt_name}'")
+
+    if len(versions) >= 2:
+        # Check for regressions between versions
+        current_v = versions[0]["version"]  # Latest
+        baseline_v = versions[1]["version"]  # Previous
+
+        print(f"🔍 Checking regressions: {baseline_v} → {current_v}")
+
+        # Define custom thresholds (optional)
+        thresholds = {
+            "cost": 0.20,      # 20% cost increase threshold
+            "latency": 0.30,   # 30% latency increase threshold
+            "quality": -0.10,  # 10% quality decrease threshold
+            "error_rate": 0.05 # 5% error rate increase threshold
+        }
+
+        # Check for performance regressions
+        alerts = monitor.check_regression(
+            name=prompt_name,
+            current_version=current_v,
+            baseline_version=baseline_v,
+            thresholds=thresholds
+        )
+
+        if alerts:
+            print(f"\n⚠️  Found {len(alerts)} performance alerts:")
+            for i, alert in enumerate(alerts, 1):
+                print(f"   {i}. {alert.alert_type.value}: {alert.message}")
+                print(f"      Baseline: {alert.baseline_value:.4f} → Current: {alert.current_value:.4f}")
+                print(f"      Change: {alert.change_percent:+.1f}% (threshold: {alert.threshold:.0f}%)")
+                print()
+        else:
+            print("✅ No performance regressions detected!")
+
+        # Add alert handler for future monitoring
+        def alert_handler(alert):
+            print(f"🚨 REAL-TIME ALERT: {alert.alert_type.value} for {alert.prompt_name}")
+            print(f"    {alert.message}")
+            print(f"    Change: {alert.change_percent:+.1f}%")
+
+        monitor.add_alert_handler(alert_handler)
+        print("📡 Alert handler registered for future monitoring")
+
+        # Show metrics summary
+        print(f"\n📈 Metrics Summary:")
+        baseline_metrics = pv.storage.get_metrics_summary(versions[1]["id"])
+        current_metrics = pv.storage.get_metrics_summary(versions[0]["id"])
+
+        if baseline_metrics and current_metrics:
+            print(f"   Cost:    {baseline_metrics.get('avg_cost', 0):.4f} → {current_metrics.get('avg_cost', 0):.4f}")
+            print(f"   Latency: {baseline_metrics.get('avg_latency', 0):.1f}ms → {current_metrics.get('avg_latency', 0):.1f}ms")
+            print(f"   Quality: {baseline_metrics.get('avg_quality', 0):.3f} → {current_metrics.get('avg_quality', 0):.3f}")
+            print(f"   Success: {baseline_metrics.get('success_rate', 0):.1%} → {current_metrics.get('success_rate', 0):.1%}")
+
+    else:
+        print("⚠️  Need at least 2 versions to check for regressions")
+else:
+    print("⚠️  No prompts found. Create some prompts first with basic_usage.py")
+
+print("\n✅ Performance monitoring test complete!")
 ```
 
 ---
 
 ## 📖 Examples & Use Cases
 
+> 💡 **All examples are fully functional and can be run directly!**
+>
+> 📂 **Examples Directory**: [`examples/`](examples/) contains complete working examples for every feature.
+
+| Example | Description | Key Features |
+|---------|-------------|--------------|
+| [`basic_usage.py`](examples/basic_usage.py) | Getting started with prompt versioning | Version creation, retrieval, basic metrics |
+| [`version_management.py`](examples/version_management.py) | Advanced version control operations | Semantic versioning, metadata, version comparison |
+| [`metrics_tracking.py`](examples/metrics_tracking.py) | Comprehensive metrics logging | Token tracking, quality scores, cost analysis |
+| [`ab_testing.py`](examples/ab_testing.py) | A/B testing framework | Statistical testing, winner determination |
+| [`performance_monitoring.py`](examples/performance_monitoring.py) | Automated performance monitoring | Regression detection, alert generation |
+| [`summarization_example.py`](examples/summarization_example.py) | Real-world summarization pipeline | Production-ready LLM integration |
+| [`code_review.py`](examples/code_review.py) | Multi-stage code review system | Security and performance analysis |
+| [`test_all_features.py`](examples/test_all_features.py) | Complete feature demonstration | End-to-end workflow testing |
+| [`run_dashboard.py`](examples/run_dashboard.py) | Web dashboard launcher | Dashboard configuration and startup |
+| [`clear_db.py`](examples/clear_db.py) | Database management utilities | Clean up and reset operations |
+
 ### Content Summarization Pipeline
+
+> 📁 **Complete example**: [`examples/summarization_example.py`](examples/summarization_example.py)
 
 ```python
 import openai
@@ -452,6 +660,8 @@ Key Points:
 ```
 
 ### Code Review Assistant
+
+> 📁 **Complete example**: [`examples/code_review.py`](examples/code_review.py)
 
 ```python
 # Multi-stage code review system
@@ -545,16 +755,18 @@ PROMPT_VERSIONER_ALERT_EMAIL=admin@yourcompany.com
 
 ### Best Practices
 
+> 📁 **See also**: [`examples/test_all_features.py`](examples/test_all_features.py) for complete workflow examples
+
 #### 1. **Semantic Versioning Strategy**
 ```python
 # MAJOR: Breaking changes to prompt logic
-pv.save_version(name="assistant", ..., bump_type=VersionBump.MAJOR)
+pv.save_version(name="code_reviewer", ..., bump_type=VersionBump.MAJOR)
 
 # MINOR: New features or improvements
-pv.save_version(name="assistant", ..., bump_type=VersionBump.MINOR)
+pv.save_version(name="code_reviewer", ..., bump_type=VersionBump.MINOR)
 
 # PATCH: Bug fixes or small adjustments
-pv.save_version(name="assistant", ..., bump_type=VersionBump.PATCH)
+pv.save_version(name="code_reviewer", ..., bump_type=VersionBump.PATCH)
 ```
 
 #### 2. **Comprehensive Metadata**
@@ -580,36 +792,60 @@ metadata = {
 
 # Always define success criteria upfront
 ab_test = ABTest(
-    name="few_shot_improvement",
-    success_metric="quality_score",
-    minimum_effect_size=0.05,  # 5% improvement required
-    alpha=0.05,  # 95% confidence
-    power=0.8   # 80% statistical power
+    versioner=pv,
+    prompt_name="code_reviewer",
+    version_a="1.0.0",
+    version_b="1.0.0",
+    metric_name="quality_score",
 )
 ```
 
 #### 4. **Production Monitoring**
 ```python
-# Set up monitoring for all critical prompts
+monitor = PerformanceMonitor(versioner=pv)
+
+# Set up alert handler for notifications
+def alert_handler(alert):
+    """Handle performance alerts."""
+    print(f"🚨 ALERT: {alert.alert_type.value} for {alert.prompt_name}")
+    print(f"    {alert.message}")
+    print(f"    Change: {alert.change_percent:+.1f}%")
+
+    # Send to notification channels
+    if alert.alert_type.value in ["COST_INCREASE", "LATENCY_INCREASE"]:
+        send_slack_notification(alert)
+    if alert.change_percent > 50:  # Critical alerts
+        send_email_alert(alert)
+
+monitor.add_alert_handler(alert_handler)
+
+# Check critical prompts for regressions
 critical_prompts = ["user_support", "content_moderation", "code_generation"]
 
 for prompt_name in critical_prompts:
-    monitor.add_prompt(
-        prompt_name=prompt_name,
-        alert_thresholds={
-            "quality_score": {"min": 0.9},
-            "success_rate": {"min": 0.98},
-            "latency_ms": {"max": 800}
-        },
-        notification_channels=["email", "slack"]
-    )
+    versions = pv.list_versions(prompt_name)
+    if len(versions) >= 2:
+        alerts = monitor.check_regression(
+            name=prompt_name,
+            current_version=versions[0]["version"],  # Latest
+            baseline_version=versions[1]["version"], # Previous
+            thresholds={
+                "quality": -0.10,      # 10% quality decrease
+                "cost": 0.20,          # 20% cost increase
+                "latency": 0.30,       # 30% latency increase
+                "error_rate": 0.05     # 5% error rate increase
+            }
+        )
+
+        if alerts:
+            print(f"⚠️ Found {len(alerts)} alerts for {prompt_name}")
 ```
 
 ---
 
-## 🤝 Contributing
+## 🌟 Contributing
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details (TODO).
 
 ### Development Setup
 
@@ -652,15 +888,6 @@ pytest --cov=prompt_versioner --cov-report=html
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 🙏 Acknowledgments
-
-- **OpenAI** for inspiration and API integration examples
-- **Semantic Versioning** specification for version management principles
-- **Flask** and **SQLAlchemy** for the web framework and ORM
-- **Click** for the beautiful CLI interface
 
 ---
 
