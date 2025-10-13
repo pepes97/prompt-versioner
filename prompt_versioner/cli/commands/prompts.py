@@ -1,5 +1,6 @@
 """Commands for listing and viewing prompts."""
 
+from typing import Dict, List
 import click
 from prompt_versioner.cli.main_cli import cli
 from prompt_versioner.cli.utils.formatters import (
@@ -64,5 +65,24 @@ def show(ctx: click.Context, name: str, version: str) -> None:
     metrics = versioner.storage.get_metrics(v["id"])
     if metrics:
         console.print("\n[bold]Metrics:[/bold]")
-        table = format_metrics_table(metrics)
-        console.print(table)
+
+        # Aggregate metrics for display
+        aggregated: Dict[str, List[float]] = {}
+        for metric in metrics:
+            for key, value in metric.items():
+                if (
+                    key not in ["id", "version_id", "timestamp", "metadata", "error_message"]
+                    and value is not None
+                ):
+                    if isinstance(value, (int, float)):
+                        if key not in aggregated:
+                            aggregated[key] = []
+                        aggregated[key].append(float(value))
+
+        if aggregated:
+            table = format_metrics_table(aggregated)
+            console.print(table)
+        else:
+            console.print("No numeric metrics available for this version.")
+    else:
+        console.print("\n[dim]No metrics recorded for this version.[/dim]")
