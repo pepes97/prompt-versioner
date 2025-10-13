@@ -1,144 +1,122 @@
-# Prompt Versioner
+# Welcome to Prompt Versioner
 
-<img src="images/logo.svg" alt="Prompt Versioner Logo" width="250" height="250">
+<div align="center">
+    <img src="images/logo.svg" alt="Prompt Versioner Logo" width="200" height="200">
+    <h2>Comprehensive Python library for managing and versioning LLM prompts</h2>
+</div>
 
-**A comprehensive Python library for managing and versioning LLM prompts, with built-in A/B testing, metric tracking, and performance monitoring capabilities.**
+**Prompt Versioner** is an enterprise-grade prompt management system that provides version control, performance tracking, A/B testing, and collaboration tools for AI applications.
 
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![Documentation](https://img.shields.io/badge/docs-online-brightgreen.svg)](https://pepes97.github.io/prompt-versioner/)
-
----
-
-## Why Prompt Versioner?
+## 🎯 Why Prompt Versioner?
 
 In the rapidly evolving world of AI and Large Language Models, managing prompt versions, tracking performance, and ensuring consistent quality is crucial for production applications. **Prompt Versioner** provides enterprise-grade prompt management with:
 
-!!! tip "Key Benefits"
-    - **🔄 Version Control**: Complete versioning for prompts with full history
-    - **📊 Performance Tracking**: Comprehensive metrics and regression detection
-    - **🧪 A/B Testing**: Built-in statistical framework for prompt optimization
-    - **⚡ Real-time Monitoring**: Automated alerts and performance dashboards
-    - **👥 Team Collaboration**: Annotations, reviews, and shared insights
-    - **🎨 Modern UI**: Beautiful web dashboard with dark/light themes
+- **🔄 Version Control**: Complete versioning for prompts with full history
+- **📊 Performance Tracking**: Comprehensive metrics and regression detection
+- **🧪 A/B Testing**: Built-in statistical framework for prompt optimization
+- **⚡ Real-time Monitoring**: Automated alerts and performance dashboards
+- **👥 Team Collaboration**: Annotations, reviews, and shared insights
+- **🎨 Modern UI**: Beautiful web dashboard with dark/light themes
 
-## Quick Start
+## ✨ Key Features
 
-Get started with Prompt Versioner in just a few lines of code:
+### 🔧 Core Functionality
+- **Versioning**: Automatic version management with MAJOR/MINOR/PATCH bumps
+- **Metrics Tracking**: Comprehensive LLM call metrics (tokens, latency, quality, cost)
+- **Export/Import**: Backup and share prompts with full history
+- **Git Integration**: Optional Git integration for version control
 
-```python title="Basic Usage"
-from prompt_versioner import PromptVersioner, VersionBump
+### 🧪 Advanced Testing & Monitoring
+- **A/B Testing**: Built-in statistical framework for comparing prompt versions
+- **Performance Monitoring**: Automated regression detection and alerting
+- **Real-time Analytics**: Live metrics and performance dashboards
+- **Custom Alerts**: Configure thresholds for cost, latency, and quality metrics
 
-# Initialize versioner
-pv = PromptVersioner(project_name="my-ai-project", enable_git=False)
+### 👥 Collaboration & Management
+- **Team Annotations**: Collaborative notes and feedback system
+- **Version Comparison**: Detailed diff views with change tracking
+- **Search & Filtering**: Find prompts by metadata, performance, and tags
 
-# Save your first prompt version
-pv.save_version(
-    name="code_reviewer",
-    system_prompt="You are an expert code reviewer...",
-    user_prompt="Review this code: {code}",
-    bump_type=VersionBump.MAJOR,  # Creates version 1.0.0
-    metadata={"type": "code_review", "author": "team"}
-)
+## 🚀 Quick Start
 
-# Get the latest version
-latest = pv.get_latest("code_reviewer")
-print(f"✅ Latest version: {latest['version']}")
+### Installation
+
+```bash
+pip install prompt-versioner
 ```
 
-## What's Next?
+### Basic Usage
 
-<div class="grid cards" markdown>
+```python
+from prompt_versioner import PromptVersioner
 
--   :material-download:{ .lg .middle } **Installation**
+# Initialize the versioner
+versioner = PromptVersioner(db_path="prompts.db")
 
-    ---
+# Save a prompt
+prompt_id = versioner.save_prompt(
+    content="You are a helpful assistant. Answer: {question}",
+    variables={"question": "What is AI?"},
+    tags=["assistant", "general"]
+)
 
-    Get Prompt Versioner installed quickly with Poetry or pip
+# Create a new version
+versioner.create_version(
+    prompt_id=prompt_id,
+    content="You are an expert AI assistant. Please answer: {question}",
+    bump_type="minor",
+    description="Improved prompt clarity"
+)
 
-    [:octicons-arrow-right-24: Install now](installation.md)
+# Track metrics
+versioner.track_metrics(
+    prompt_id=prompt_id,
+    version="1.1.0",
+    llm_response="AI is artificial intelligence...",
+    input_tokens=15,
+    output_tokens=25,
+    latency=1.2,
+    cost=0.001
+)
+```
 
--   :material-rocket-launch:{ .lg .middle } **Quick Start**
+### Web Dashboard
 
-    ---
+Launch the interactive web dashboard:
 
-    Learn the basics with our step-by-step guide
+```bash
+prompt-dashboard
+```
 
-    [:octicons-arrow-right-24: Get started](quickstart.md)
-
--   :material-monitor-dashboard:{ .lg .middle } **Web Dashboard**
-
-    ---
-
-    Explore the beautiful web interface for managing prompts
-
-    [:octicons-arrow-right-24: View dashboard](dashboard/overview.md)
-
--   :material-code-braces:{ .lg .middle } **API Reference**
-
-    ---
-
-    Detailed documentation for all classes and methods
-
-    [:octicons-arrow-right-24: API docs](api/core.md)
-
+<div style="display: flex; justify-content: space-between; margin: 20px 0;">
+    <img src="images/dashboard-overview.png" alt="Dashboard Overview" style="width: 48%;">
+    <img src="images/dark-mode.png" alt="Dark Mode" style="width: 48%;">
 </div>
 
-## Features Overview
+## 📖 Documentation Structure
 
-### Core Functionality
+- **[Getting Started](getting-started/installation.md)**: Installation, setup, and configuration
+- **[User Guide](user-guide/core-concepts.md)**: Comprehensive guides for all features
+- **[Examples](examples/basic-usage.md)**: Practical examples and use cases
+- **[API Reference](api-reference/core/versioner.md)**: Complete API documentation
+- **[Development](development/contributing.md)**: Contributing and development guides
 
-**Versioning**
-:   Automatic version management with MAJOR/MINOR/PATCH bumps using semantic versioning
+## 🔗 Quick Links
 
-**Metrics Tracking**
-:   Comprehensive LLM call metrics including tokens, latency, quality scores, and costs
+- [Installation Guide](getting-started/installation.md)
+- [Quick Start Tutorial](getting-started/quick-start.md)
+- [A/B Testing Guide](user-guide/ab-testing.md)
+- [Web Dashboard](user-guide/web-dashboard.md)
+- [API Reference](api-reference/core/versioner.md)
 
-**Export & Backup**
-:   Complete backup and sharing capabilities with full prompt history
+## 🤝 Community & Support
 
-**Git Integration**
-:   Optional Git integration for seamless version control workflows
-
-### Advanced Testing & Monitoring
-
-**A/B Testing**
-:   Built-in statistical framework for comparing prompt versions with confidence intervals
-
-**Performance Monitoring**
-:   Automated regression detection and alerting for production environments
-
-**Real-time Analytics**
-:   Live metrics dashboards with customizable views and filters
-
-**Custom Alerts**
-:   Configurable thresholds for cost, latency, quality, and custom metrics
-
-### Collaboration & Management
-
-**Team Annotations**
-:   Collaborative notes and feedback system for prompt development
-
-**Version Comparison**
-:   Detailed diff views with syntax highlighting and change tracking
-
-**Search & Filtering**
-:   Powerful search capabilities by metadata, performance metrics, and tags
-
-**Modern Web Interface**
-:   Beautiful, responsive UI with dark/light themes and real-time updates
+- **GitHub Repository**: [pepes97/prompt-versioner](https://github.com/pepes97/prompt-versioner)
+- **Issues & Bug Reports**: [GitHub Issues](https://github.com/pepes97/prompt-versioner/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/pepes97/prompt-versioner/discussions)
 
 ---
 
-## Community & Support
-
-Join our growing community of developers building better AI applications:
-
-- **GitHub**: [pepes97/prompt-versioner](https://github.com/pepes97/prompt-versioner)
-- **Issues**: [Report bugs or request features](https://github.com/pepes97/prompt-versioner/issues)
-- **Discussions**: [Join the community](https://github.com/pepes97/prompt-versioner/discussions)
-
----
-
-*Built with ❤️ by Sveva Pepe, an NLP Engineer*
+<div align="center">
+    <p>Built with ❤️ for the AI community</p>
+</div>
