@@ -900,6 +900,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 <p align="center">
-  <strong>Made with ❤️</strong><br>
+  <strong>Build by Sveva Pepe, an NLP Engineer</strong><br>
   <sub>Star ⭐ this project if it helps you build better AI applications!</sub>
 </p>
