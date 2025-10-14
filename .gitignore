@@ -210,3 +210,7 @@ __marimo__/
 .prompt_versions/
 settings.json
 .bat
+
+
+poetry.lock
+pyproject.toml
