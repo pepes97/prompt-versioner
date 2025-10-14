@@ -1,4 +1,4 @@
-site_dir: docs
+site_dir: site
 site_name: Prompt Versioner
 site_description: Comprehensive Python library for managing and versioning LLM prompts
 site_author: Sveva Pepe
@@ -7,6 +7,7 @@ site_url: https://pepes97.github.io/prompt-versioner/
 repo_name: pepes97/prompt-versioner
 repo_url: https://github.com/pepes97/prompt-versioner
 edit_uri: edit/main/docs/
+docs_dir: docs
 
 copyright: Copyright &copy; 2025 Sveva Pepe
 
