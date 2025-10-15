@@ -30,11 +30,19 @@ In the rapidly evolving world of AI and Large Language Models, managing prompt v
 
 ## ✨ Features
 
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
 ### 🔧 Core Functionality
 - **Versioning**: Automatic version management with MAJOR/MINOR/PATCH bumps
 - **Metrics Tracking**: Comprehensive LLM call metrics (tokens, latency, quality, cost)
 - **Export**: Backup and share prompts with full history
 - **Git Integration**: Optional Git integration for version control
+
+</td>
+<td width="50%" valign="top">
 
 ### 🧪 Advanced Testing & Monitoring
 - **A/B Testing**: Built-in statistical framework for comparing prompt versions
@@ -42,20 +50,31 @@ In the rapidly evolving world of AI and Large Language Models, managing prompt v
 - **Real-time Analytics**: Live metrics and performance dashboards
 - **Custom Alerts**: Configure thresholds for cost, latency, and quality metrics
 
+</tr>
+<tr>
+</td>
+<td width="50%" valign="top">
+
 ### 👥 Collaboration & Management
 - **Team Annotations**: Collaborative notes and feedback system
 - **Version Comparison**: Detailed diff views with change tracking
 - **Search & Filtering**: Find prompts by metadata, performance, and tags
+
+</td>
+<td width="50%" valign="top">
 
 ### 🎨 Modern Web Interface
 - **Interactive Dashboard**: Beautiful, responsive web UI
 - **Dark/Light Themes**: Customizable interface with modern design
 - **Tab Navigation**: Organized sections for Prompts, A/B Testing, Comparisons, and Alerts
 - **Real-time Updates**: Live data refresh and instant feedback
+</tr>
+</table>
 
 ![Dashboard Overview](docs/images/dashboard-overview.png)
 
 ---
+
 
 ## 📦 Installation
 
@@ -63,6 +82,10 @@ In the rapidly evolving world of AI and Large Language Models, managing prompt v
 - **Python 3.11** or higher
 - **Poetry** (recommended) or pip
 - **Git** (optional, for version control integration)
+
+<table>
+<tr>
+<td width="50%" valign="top">
 
 ### Using Poetry (Recommended)
 
@@ -75,6 +98,9 @@ git clone https://github.com/pepes97/prompt-versioner.git
 cd prompt-versioner
 poetry install
 ```
+</td>
+<td width="50%" valign="top">
+
 
 ### Using pip
 
@@ -87,16 +113,9 @@ git clone https://github.com/pepes97/prompt-versioner.git
 cd prompt-versioner
 pip install -e .
 ```
-
-### Verify Installation
-
-```bash
-# Check if CLI is available
-pv --help
-
-# Launch dashboard to verify web interface
-pv dashboard --port 5000
-```
+</td>
+</tr>
+</table>
 
 ---
 
@@ -124,9 +143,6 @@ print("✅ Created first prompt version 1.0.0!")
 ## 🎨 Web Dashboard
 
 The modern web interface provides a comprehensive view of your prompt versions, metrics, and testing results.
-
-![Dashboard Overview](docs/images/dashboard-overview.png)
-
 ### Core Features
 
 #### 📋 **Prompts Management**
@@ -164,14 +180,6 @@ The modern web interface provides a comprehensive view of your prompt versions, 
 - **Custom Metrics**: Define your own alert conditions
 
 ![Alerts System](docs/images/alerts-system.png)
-
-### Dashboard Themes
-
-Switch seamlessly between **Dark Mode** and **Light Mode** with full UI consistency:
-
-| Dark Mode | Light Mode |
-|-----------|------------|
-| ![Dark Mode](docs/images/dark-mode.png) | ![Light Mode](docs/images/light-mode.png) |
 
 ---
 
