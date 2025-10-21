@@ -210,3 +210,4 @@ __marimo__/
 .prompt_versions/
 settings.json
 .bat
+release.sh

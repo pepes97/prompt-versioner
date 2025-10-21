@@ -1,6 +1,6 @@
 [project]
 name = "prompt-versioner"
-version = "0.1.1"
+version = "0.1.2"
 description = "Intelligent versioning system for LLM prompts with Git integration"
 readme = "README.md"
 authors = [{ name = "Sveva Pepe", email = "sveva.pepe@gmail.com" }]

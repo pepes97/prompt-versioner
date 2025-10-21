@@ -51,7 +51,7 @@ Prompt Versioner provides enterprise-grade prompt management with:
 - Real-time updates
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/pepes97/prompt-versioner/main/docs/images/dashboard-overview.png" alt="Dashboard Overview" width="800">
+  <img src="https://raw.githubusercontent.com/pepes97/prompt-versioner/main/docs/images/dashboard-overview.png" alt="Dashboard Overview" width="1000">
 </p>
 
 ---
@@ -106,7 +106,7 @@ print("✅ Created first prompt version 1.0.0!")
 * Live preview
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/pepes97/prompt-versioner/main/docs/images/prompts-management.png" alt="Prompts Management" width="800">
+  <img src="https://raw.githubusercontent.com/pepes97/prompt-versioner/main/docs/images/prompts-management.png" alt="Prompts Management" width="1000">
 </p>
 
 #### 📊 Metrics & Analytics
@@ -115,7 +115,7 @@ print("✅ Created first prompt version 1.0.0!")
 * Quality score tracking
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/pepes97/prompt-versioner/main/docs/images/metrics-analytics.png" alt="Metrics Dashboard" width="800">
+  <img src="https://raw.githubusercontent.com/pepes97/prompt-versioner/main/docs/images/metrics-analytics.png" alt="Metrics Dashboard" width="1000">
 </p>
 
 #### 🧪 A/B Testing
@@ -124,7 +124,7 @@ print("✅ Created first prompt version 1.0.0!")
 * Real-time results
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/pepes97/prompt-versioner/main/docs/images/ab-testing.png" alt="AB Testing Interface" width="800">
+  <img src="https://raw.githubusercontent.com/pepes97/prompt-versioner/main/docs/images/ab-testing.png" alt="AB Testing Interface" width="1000">
 </p>
 
 #### 🔍 Version Comparison
@@ -134,7 +134,7 @@ print("✅ Created first prompt version 1.0.0!")
 * Smart annotations
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/pepes97/prompt-versioner/main/docs/images/version-comparison.png" alt="Version Comparison" width="800">
+  <img src="https://raw.githubusercontent.com/pepes97/prompt-versioner/main/docs/images/version-comparison.png" alt="Version Comparison" width="1000">
 </p>
 
 #### ⚠️ Smart Alerts
@@ -144,7 +144,7 @@ print("✅ Created first prompt version 1.0.0!")
 * Custom metrics & thresholds
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/pepes97/prompt-versioner/main/docs/images/alerts-system.png" alt="Alerts System" width="800">
+  <img src="https://raw.githubusercontent.com/pepes97/prompt-versioner/main/docs/images/alerts-system.png" alt="Alerts System" width="1000">
 </p>
 
 ---
