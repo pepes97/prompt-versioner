@@ -2,134 +2,134 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/api-reference/cli/commands/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/api-reference/cli/utils/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/api-reference/core/enums/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/api-reference/core/version-manager/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/api-reference/core/versioner/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/api-reference/metrics/aggregator/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/api-reference/metrics/analyzer/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/api-reference/metrics/calculator/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/api-reference/metrics/models/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/api-reference/metrics/pricing/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/api-reference/metrics/tracker/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/api-reference/storage/database/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/api-reference/storage/queries/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/api-reference/storage/schema/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/api-reference/testing/ab-test/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/api-reference/testing/runner/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/api-reference/web/controllers/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/api-reference/web/flask-builder/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/examples/advanced-workflows/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/examples/basic-usage/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/examples/best-practices/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/examples/integrations/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/getting-started/configuration/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/getting-started/installation/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/getting-started/quick-start/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/user-guide/ab-testing/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/user-guide/collaboration/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/user-guide/core-concepts/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/user-guide/metrics-tracking/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/user-guide/performance-monitoring/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/user-guide/version-management/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
     <url>
          <loc>https://pepes97.github.io/prompt-versioner/user-guide/web-dashboard/</loc>
-         <lastmod>2025-10-15</lastmod>
+         <lastmod>2025-10-21</lastmod>
     </url>
 </urlset>
