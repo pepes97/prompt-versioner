@@ -83,9 +83,6 @@ In the rapidly evolving world of AI and Large Language Models, managing prompt v
 - **Poetry** (recommended) or pip
 - **Git** (optional, for version control integration)
 
-<table>
-<tr>
-<td width="50%" valign="top">
 
 ### Using Poetry (Recommended)
 
@@ -98,9 +95,6 @@ git clone https://github.com/pepes97/prompt-versioner.git
 cd prompt-versioner
 poetry install
 ```
-</td>
-<td width="50%" valign="top">
-
 
 ### Using pip
 
@@ -113,9 +107,6 @@ git clone https://github.com/pepes97/prompt-versioner.git
 cd prompt-versioner
 pip install -e .
 ```
-</td>
-</tr>
-</table>
 
 ---
 
