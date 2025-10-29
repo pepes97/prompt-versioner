@@ -42,46 +42,42 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
-      - name: Bump version and tag safely
+      - name: Bump version minor only on last patch
         id: version
         run: |
-          # Fetch tags e branch remoto
           git fetch --tags
           git fetch origin main
-
-          # Trova l'ultima versione sul remoto
-          REMOTE_VERSION=$(git ls-remote --tags origin | awk -F'v' '{print $2}' | sort -V | tail -n1)
-          echo "Latest remote version: $REMOTE_VERSION"
 
           CURRENT_VERSION=$(poetry version -s)
           echo "Current local version: $CURRENT_VERSION"
 
-          # Bump minor solo se necessario
-          if [ "$CURRENT_VERSION" = "$REMOTE_VERSION" ] || [ -z "$REMOTE_VERSION" ]; then
+          MAJOR=$(echo $CURRENT_VERSION | cut -d. -f1)
+          MINOR=$(echo $CURRENT_VERSION | cut -d. -f2)
+          PATCH=$(echo $CURRENT_VERSION | cut -d. -f3)
+
+          # Bump minor solo se patch=9 (ultimo della serie)
+          if [ "$PATCH" -eq 9 ]; then
               poetry version minor
               NEW_VERSION=$(poetry version -s)
               echo "Bumping version from $CURRENT_VERSION to $NEW_VERSION"
+
+              git add pyproject.toml
+              git commit -m "Bump version to $NEW_VERSION"
+
+              # Crea tag solo se non esiste
+              if git rev-parse "v$NEW_VERSION" >/dev/null 2>&1; then
+                  echo "Tag v$NEW_VERSION already exists, skipping tag creation"
+              else
+                  git tag "v$NEW_VERSION"
+              fi
+
+              git push origin main || echo "Push failed, maybe behind remote, skipping"
+              git push origin --tags || echo "Push tags failed, maybe tag exists, skipping"
+
           else
               NEW_VERSION=$CURRENT_VERSION
               echo "No bump needed, using version $NEW_VERSION"
           fi
-
-          # Commit solo se la versione è cambiata
-          if [ "$NEW_VERSION" != "$CURRENT_VERSION" ]; then
-              git add pyproject.toml
-              git commit -m "Bump version to $NEW_VERSION"
-          fi
-
-          # Crea tag solo se non esiste
-          if git rev-parse "v$NEW_VERSION" >/dev/null 2>&1; then
-              echo "Tag v$NEW_VERSION already exists, skipping tag creation"
-          else
-              git tag "v$NEW_VERSION"
-          fi
-
-          # Push senza rebase per evitare conflitti
-          git push origin main || echo "Push failed, maybe behind remote, skipping"
-          git push origin --tags || echo "Push tags failed, maybe tag exists, skipping"
 
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
@@ -90,7 +86,6 @@ jobs:
           POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_API_TOKEN }}
         run: |
           VERSION=$(poetry version -s)
-          # Controlla se la versione esiste già su PyPI
           if curl -sSf https://pypi.org/pypi/prompt-versioner/$VERSION/json > /dev/null; then
               echo "Version $VERSION already exists on PyPI, skipping publish"
           else
