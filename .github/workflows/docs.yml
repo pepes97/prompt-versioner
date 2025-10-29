@@ -13,33 +13,39 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2. Set up Python 3.11
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
+      # 3. Install Poetry senza creare virtualenv
       - name: Install Poetry
         uses: snok/install-poetry@v1
         with:
           version: 1.8.3
           virtualenvs-create: false
 
+      # 4. Install dependencies MkDocs
       - name: Install dependencies
         run: pip install mkdocs mkdocs-material mkdocs-autorefs pymdown-extensions
 
-      # Aggiorna la versione nella navbar
+      # 5. Aggiorna la versione nella navbar leggendo quella del package
       - name: Update version in mkdocs.yml
         run: |
           VERSION=$(poetry version -s)
           echo "Updating MkDocs Material navbar version to $VERSION"
-          sed -i "s/^  version:.*$/  version: \"$VERSION\"/" mkdocs.yml
+          sed -i "s|provider: mike|\"$VERSION\"|" mkdocs.yml
 
+      # 6. Build documentazione
       - name: Build documentation
         run: mkdocs build
 
+      # 7. Deploy su GitHub Pages
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
