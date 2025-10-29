@@ -51,8 +51,8 @@ jobs:
           CURRENT_VERSION=$(poetry version -s)
           echo "Current version: $CURRENT_VERSION"
 
-          # Bump patch version
-          poetry version patch
+          # Bump minor version
+          poetry version minor
           NEW_VERSION=$(poetry version -s)
           echo "Bumping version from $CURRENT_VERSION to $NEW_VERSION"
 
