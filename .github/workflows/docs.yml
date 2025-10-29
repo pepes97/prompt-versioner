@@ -30,10 +30,12 @@ jobs:
       - name: Install dependencies
         run: pip install mkdocs mkdocs-material mkdocs-autorefs pymdown-extensions
 
-      - name: Insert current version into docs
+      # Aggiorna la versione nella navbar
+      - name: Update version in mkdocs.yml
         run: |
           VERSION=$(poetry version -s)
-          echo "Current version: $VERSION" > docs/version.md
+          echo "Updating MkDocs Material navbar version to $VERSION"
+          sed -i "s/^  version:.*$/  version: \"$VERSION\"/" mkdocs.yml
 
       - name: Build documentation
         run: mkdocs build
