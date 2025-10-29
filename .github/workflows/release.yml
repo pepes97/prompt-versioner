@@ -41,7 +41,8 @@ jobs:
       - name: Bump version and tag
         id: version
         run: |
-          git fetch --tags  # assicura che conosci tutti i tag remoti
+          git fetch --tags
+          git fetch origin main
 
           CURRENT_VERSION=$(poetry version -s)
           echo "Current version: $CURRENT_VERSION"
@@ -51,6 +52,9 @@ jobs:
           echo "Bumping version from $CURRENT_VERSION to $NEW_VERSION"
 
           git commit -am "Bump version to $NEW_VERSION"
+
+          # Allinea il branch locale con il remoto
+          git rebase origin/main
 
           # Crea il tag solo se non esiste
           if git rev-parse "v$NEW_VERSION" >/dev/null 2>&1; then
