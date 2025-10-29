@@ -1,9 +1,14 @@
-[project]
+[tool.poetry]
 name = "prompt-versioner"
 version = "0.1.4"
 description = "Intelligent versioning system for LLM prompts with Git integration"
 readme = "README.md"
-authors = [{ name = "Sveva Pepe", email = "sveva.pepe@gmail.com" }]
+authors = ["Sveva Pepe <sveva.pepe@gmail.com>"]
+license = "MIT"
+packages = [{ include = "prompt_versioner" }]
+homepage = "https://github.com/pepes97/prompt-versioner"
+repository = "https://github.com/pepes97/prompt-versioner"
+documentation = "https://pepes97.github.io/prompt-versioner/"
 requires-python = ">=3.11"
 
 dependencies = [
@@ -20,21 +25,19 @@ dependencies = [
     "mkdocs-material>=9.6.21"
 ]
 
-[project.optional-dependencies]
-dev = [
-    "pytest>=7.4.3",
-    "pytest-cov>=4.1.0",
-    "black>=23.12.0",
-    "ruff>=0.1.8",
-    "mypy>=1.7.1",
-    "types-pyyaml>=6.0.12.20250915",
-    "mkdocs>=1.5.3",
-    "mkdocs-material>=9.4.7",
-    "mkdocstrings[python]>=0.24.0",
-    "mkdocs-autorefs>=0.5.0"
-]
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.3"
+pytest-cov = "^4.1.0"
+black = "^23.12.0"
+ruff = "^0.1.8"
+mypy = "^1.7.1"
+types-pyyaml = "^6.0.12.20250915"
+mkdocs = "^1.5.3"
+mkdocs-material = "^9.4.7"
+mkdocstrings = {extras = ["python"], version = "^0.24.0"}
+mkdocs-autorefs = "^0.5.0"
 
-[project.scripts]
+[tool.poetry.scripts]
 pv = "prompt_versioner.cli.main_cli:main"
 prompt-dashboard = "prompt_versioner.cli.commands.dashboard:dashboard_standalone"
 prompt-clear = "prompt_versioner.cli.commands.management:clear_db_standalone"
@@ -42,9 +45,6 @@ prompt-clear = "prompt_versioner.cli.commands.management:clear_db_standalone"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.poetry]
-packages = [{ include = "prompt_versioner" }]
 
 [tool.black]
 line-length = 100
