@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "prompt-versioner"
-version = "0.1.12"
+version = "0.1.13"
 description = "Intelligent versioning system for LLM prompts with Git integration"
 readme = "README.md"
 authors = ["Sveva Pepe <sveva.pepe@gmail.com>"]
