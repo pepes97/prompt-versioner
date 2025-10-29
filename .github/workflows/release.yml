@@ -6,7 +6,7 @@ on:
       - main
 
 permissions:
-  contents: write   # serve per pushare tag e aggiornare gh-pages
+  contents: write
   id-token: write
 
 jobs:
@@ -17,7 +17,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # serve per i tag e mkdocs
+          fetch-depth: 0  # serve per tag e mkdocs
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -29,6 +29,10 @@ jobs:
         with:
           version: 1.8.3
           virtualenvs-create: false
+
+      - name: Regenerate Poetry lock file if needed
+        run: |
+          poetry lock --no-update || true
 
       - name: Install dependencies
         run: poetry install --no-root
@@ -47,14 +51,15 @@ jobs:
           CURRENT_VERSION=$(poetry version -s)
           echo "Current version: $CURRENT_VERSION"
 
+          # Bump patch version
           poetry version patch
           NEW_VERSION=$(poetry version -s)
           echo "Bumping version from $CURRENT_VERSION to $NEW_VERSION"
 
           git commit -am "Bump version to $NEW_VERSION"
 
-          # Allinea il branch locale con il remoto
-          git rebase origin/main
+          # Rebase per evitare non-fast-forward
+          git rebase origin/main || git rebase --abort
 
           # Crea il tag solo se non esiste
           if git rev-parse "v$NEW_VERSION" >/dev/null 2>&1; then
@@ -72,8 +77,14 @@ jobs:
         env:
           POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_API_TOKEN }}
         run: |
-          poetry build
-          poetry publish --no-interaction --username __token__ --password $POETRY_PYPI_TOKEN_PYPI
+          VERSION=$(poetry version -s)
+          # Controlla se la versione esiste già su PyPI
+          if curl -sSf https://pypi.org/pypi/prompt-versioner/$VERSION/json > /dev/null; then
+              echo "Version $VERSION already exists on PyPI, skipping publish"
+          else
+              poetry build
+              poetry publish --no-interaction --username __token__ --password $POETRY_PYPI_TOKEN_PYPI
+          fi
 
       - name: Deploy documentation to GitHub Pages
         run: |
