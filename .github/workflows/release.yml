@@ -1,18 +1,23 @@
-name: Publish to PyPI (Poetry)
+name: Release and Deploy Docs
 
 on:
   push:
     branches:
       - main
 
+permissions:
+  contents: write   # serve per pushare tag e aggiornare gh-pages
+  id-token: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # serve per i tag
+          fetch-depth: 0  # serve per i tag e mkdocs
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -25,18 +30,20 @@ jobs:
           version: 1.8.3
           virtualenvs-create: false
 
+      - name: Install dependencies
+        run: poetry install --no-root
+
       - name: Configure Git user
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
 
-      - name: Bump version
+      - name: Bump version and tag
         id: version
         run: |
           CURRENT_VERSION=$(poetry version -s)
           echo "Current version: $CURRENT_VERSION"
 
-          # incrementa patch (puoi cambiare in minor o major)
           poetry version patch
           NEW_VERSION=$(poetry version -s)
           echo "New version: $NEW_VERSION"
@@ -47,10 +54,14 @@ jobs:
 
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
-      - name: Build package
-        run: poetry build
-
-      - name: Publish to PyPI
+      - name: Build and publish to PyPI
         env:
           POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_API_TOKEN }}
-        run: poetry publish --no-interaction --username __token__ --password $POETRY_PYPI_TOKEN_PYPI
+        run: |
+          poetry build
+          poetry publish --no-interaction --username __token__ --password $POETRY_PYPI_TOKEN_PYPI
+
+      - name: Deploy documentation to GitHub Pages
+        run: |
+          pip install mkdocs mkdocs-material mkdocs-autorefs pymdown-extensions
+          mkdocs gh-deploy --force

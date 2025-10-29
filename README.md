@@ -1,14 +1,18 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/pepes97/prompt-versioner/main/docs/images/logo.svg" alt="Prompt Versioner Logo" width="250" height="250">
-</p>
+<div align="center">
+
+<img src="https://raw.githubusercontent.com/pepes97/prompt-versioner/main/docs/images/logo.svg" alt="Prompt Versioner Logo" width="250" height="250">
 
 **A comprehensive Python library for managing and versioning LLM prompts, with built-in A/B testing, metric tracking, and performance monitoring capabilities.**
 
-<p align="center">
-  <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.11+-blue.svg" alt="Python 3.11+"></a>
-  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg" alt="License MIT"></a>
-  <a href="https://github.com/psf/black"><img src="https://img.shields.io/badge/code%20style-black-000000.svg" alt="Code Style: Black"></a>
-</p>
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![PyPI - Version](https://img.shields.io/pypi/v/prompt-versioner)
+![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)
+![Downloads](https://img.shields.io/pypi/dm/prompt-versioner)
+![GitHub Repo stars](https://img.shields.io/github/stars/pepes97/prompt-versioner)
+
+[✨ Features](#-features) • [🚀 Quick Start](#-quick-start) • [📖 Documentation](https://pepes97.github.io/prompt-versioner/) • [🎯 Examples](#-examples--use-cases)
+
+</div>
 
 ---
 
