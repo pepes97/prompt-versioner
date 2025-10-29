@@ -5,10 +5,10 @@
 **A comprehensive Python library for managing and versioning LLM prompts, with built-in A/B testing, metric tracking, and performance monitoring capabilities.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-![PyPI - Version](https://img.shields.io/pypi/v/prompt-versioner)
-![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)
-![Downloads](https://img.shields.io/pypi/dm/prompt-versioner)
-![GitHub Repo stars](https://img.shields.io/github/stars/pepes97/prompt-versioner)
+[![PyPI - Version](https://img.shields.io/pypi/v/prompt-versioner)](https://pypi.org/project/prompt-versioner/)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Downloads](https://img.shields.io/pypi/dm/prompt-versioner)](https://pypi.org/project/prompt-versioner/)
+[![GitHub Repo stars](https://img.shields.io/github/stars/pepes97/prompt-versioner)](https://github.com/pepes97/prompt-versioner)
 
 [✨ Features](#-features) • [🚀 Quick Start](#-quick-start) • [📖 Documentation](https://pepes97.github.io/prompt-versioner/) • [🎯 Examples](#-examples--use-cases)
 
