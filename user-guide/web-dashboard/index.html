@@ -509,6 +509,8 @@
       
         
       
+        
+      
     
     
     
@@ -609,6 +611,29 @@
   
   <span class="md-ellipsis">
     Metrics & Tracking
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../multi-model-comparison/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Multi-Model Comparison
     
   </span>
   
@@ -828,6 +853,15 @@
   <a href="#version-details" class="md-nav__link">
     <span class="md-ellipsis">
       Version Details
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#model-performance-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      Model Performance Comparison
     </span>
   </a>
   
@@ -1183,6 +1217,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#model-performance-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      Model Performance Comparison
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1293,6 +1336,7 @@
 <li><strong>Real-time Metrics</strong>: Live performance data</li>
 <li><strong>Quality Trends</strong>: Track quality scores over time</li>
 <li><strong>Cost Analysis</strong>: Monitor usage costs</li>
+<li><strong>Multi-Model Comparison</strong>: Compare performance across different LLM models with automatic "best model" badges</li>
 </ul>
 <h2 id="starting-the-dashboard">🚀 Starting the Dashboard<a class="headerlink" href="#starting-the-dashboard" title="Permanent link">&para;</a></h2>
 <h3 id="basic-setup">Basic Setup<a class="headerlink" href="#basic-setup" title="Permanent link">&para;</a></h3>
@@ -1337,23 +1381,54 @@
 </span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>│ [View Code] [Edit] [Export] [Compare]          │
 </span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>└─────────────────────────────────────────────────┘
 </span></code></pre></div>
+<h3 id="model-performance-comparison">Model Performance Comparison<a class="headerlink" href="#model-performance-comparison" title="Permanent link">&para;</a></h3>
+<p>When you test the same prompt with multiple models, the dashboard automatically shows:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>┌─────────────────────────────────────────────────┐
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>│ 🤖 MODEL PERFORMANCE COMPARISON                │
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>├─────────────────────────────────────────────────┤
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>│ ┌─────────────────┐  ┌─────────────────┐      │
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>│ │ gpt-4o          │  │ claude-3-sonnet │      │
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>│ │ ⚡ Fastest      │  │ ⭐ Best Quality │      │
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>│ │ 250 calls       │  │ 250 calls       │      │
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>│ │ €0.0245         │  │ €0.0315         │      │
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>│ │ 450-1850ms      │  │ 520-2100ms      │      │
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>│ │ Avg: 156 tokens │  │ Avg: 142 tokens │      │
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>│ │ Quality: 95.2%  │  │ Quality: 96.1%  │      │
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>│ └─────────────────┘  └─────────────────┘      │
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>│                                                 │
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>│ ┌─────────────────┐  ┌─────────────────┐      │
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>│ │ gpt-4o-mini     │  │ gemini-pro      │      │
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>│ │ 💰 Cheapest     │  │ ✅ Most Reliable│      │
+</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>│ │ 250 calls       │  │ 250 calls       │      │
+</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>│ │ €0.0035         │  │ €0.0055         │      │
+</span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a>│ │ 380-1520ms      │  │ 410-1680ms      │      │
+</span><span id="__span-5-20"><a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a>│ │ Avg: 149 tokens │  │ Avg: 138 tokens │      │
+</span><span id="__span-5-21"><a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a>│ │ Quality: 92.8%  │  │ Quality: 93.5%  │      │
+</span><span id="__span-5-22"><a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a>│ └─────────────────┘  └─────────────────┘      │
+</span><span id="__span-5-23"><a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a>└─────────────────────────────────────────────────┘
+</span></code></pre></div>
+<p>The system automatically identifies and highlights:
+- ⚡ <strong>Fastest</strong>: Lowest average latency
+- 💰 <strong>Cheapest</strong>: Lowest cost per call
+- ⭐ <strong>Best Quality</strong>: Highest quality score
+- ✅ <strong>Most Reliable</strong>: Highest success rate</p>
 <h2 id="api-integration">🔗 API Integration<a class="headerlink" href="#api-integration" title="Permanent link">&para;</a></h2>
 <h3 id="rest-api-endpoints">REST API Endpoints<a class="headerlink" href="#rest-api-endpoints" title="Permanent link">&para;</a></h3>
 <p>The dashboard exposes REST API endpoints:</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Get all prompts</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>GET<span class="w"> </span>/api/prompts
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="c1"># Get specific prompt versions</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>GET<span class="w"> </span>/api/prompts/<span class="o">{</span>name<span class="o">}</span>/versions
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1"># Get metrics</span>
-</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>GET<span class="w"> </span>/api/prompts/<span class="o">{</span>name<span class="o">}</span>/versions/<span class="o">{</span>version<span class="o">}</span>/metrics
-</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="c1"># Create new version</span>
-</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>POST<span class="w"> </span>/api/prompts/<span class="o">{</span>name<span class="o">}</span>/versions
-</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>
-</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="c1"># Update version</span>
-</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>PUT<span class="w"> </span>/api/prompts/<span class="o">{</span>name<span class="o">}</span>/versions/<span class="o">{</span>version<span class="o">}</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># Get all prompts</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>GET<span class="w"> </span>/api/prompts
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="c1"># Get specific prompt versions</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>GET<span class="w"> </span>/api/prompts/<span class="o">{</span>name<span class="o">}</span>/versions
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="c1"># Get metrics</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>GET<span class="w"> </span>/api/prompts/<span class="o">{</span>name<span class="o">}</span>/versions/<span class="o">{</span>version<span class="o">}</span>/metrics
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="c1"># Create new version</span>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>POST<span class="w"> </span>/api/prompts/<span class="o">{</span>name<span class="o">}</span>/versions
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a><span class="c1"># Update version</span>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>PUT<span class="w"> </span>/api/prompts/<span class="o">{</span>name<span class="o">}</span>/versions/<span class="o">{</span>version<span class="o">}</span>
 </span></code></pre></div>
 <h2 id="getting-started-checklist">🚀 Getting Started Checklist<a class="headerlink" href="#getting-started-checklist" title="Permanent link">&para;</a></h2>
 <ol>
