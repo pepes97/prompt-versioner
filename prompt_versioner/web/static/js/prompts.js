@@ -181,17 +181,19 @@ const PromptsLayout = {
 
         if (!prompt || !versionsPanel) return;
 
-        versionsPanel.innerHTML = `
-            <div class="version-header">
-                <h3>
-                    📄 ${this.escapeHtml(promptName)}
-                    <span style="font-weight: normal; color: #94a3b8; font-size: 0.9rem;">
-                        ${prompt.version_count || 0} versions
-                    </span>
-                </h3>
-            </div>
-            <div class="version-list-clean" id="versionListClean"></div>
-        `;
+        // Usa il template per il version header
+        const template = document.getElementById('version-header-template');
+        const clone = template.content.cloneNode(true);
+
+        clone.querySelector('.version-header-name').textContent = promptName;
+        const countSpan = clone.querySelector('.version-header-count');
+        countSpan.textContent = `${prompt.version_count || 0} versions`;
+        countSpan.style.fontWeight = 'normal';
+        countSpan.style.color = '#94a3b8';
+        countSpan.style.fontSize = '0.9rem';
+
+        versionsPanel.innerHTML = '';
+        versionsPanel.appendChild(clone);
 
         // Mostra loading state
         const versionList = document.getElementById('versionListClean');
@@ -205,14 +207,9 @@ const PromptsLayout = {
      * Carica le versioni dettagliate per un prompt
      */
     async loadVersionsForPrompt(promptName) {
-        console.log('Caricamento versioni per prompt:', promptName);
-
         try {
             const url = `/api/prompts/${encodeURIComponent(promptName)}/versions`;
-            console.log('URL richiesta:', url);
-
             const response = await fetch(url);
-            console.log('Risposta HTTP:', response.status, response.statusText);
 
             if (!response.ok) {
                 const errorText = await response.text();
@@ -221,7 +218,6 @@ const PromptsLayout = {
             }
 
             const versions = await response.json();
-            console.log('Versioni ricevute:', versions);
 
             if (!Array.isArray(versions)) {
                 console.error('Tipo di risposta non valido:', typeof versions, versions);
@@ -236,11 +232,7 @@ const PromptsLayout = {
 
             // Verifica che ogni versione abbia le proprietà minime necessarie
             const validVersions = versions.filter(version => {
-                if (!version || typeof version !== 'object') {
-                    console.warn('Versione non valida trovata:', version);
-                    return false;
-                }
-                return true;
+                return version && typeof version === 'object';
             });
 
             this.displayVersionsList(validVersions);
@@ -276,11 +268,8 @@ const PromptsLayout = {
             return;
         }
 
-        versions.forEach((version, index) => {
-            if (!version) {
-                console.warn(`Versione ${index} è undefined o null`);
-                return;
-            }
+        versions.forEach((version) => {
+            if (!version) return;
 
             const versionElement = this.createVersionItem(version);
             versionList.appendChild(versionElement);
@@ -294,26 +283,16 @@ const PromptsLayout = {
         const template = document.getElementById('version-item-template');
         const clone = template.content.cloneNode(true);
 
-        // Debug: mostra i campi disponibili
-        console.log(`Version v${version.version}:`, {
-            id: version.id,
-            version: version.version,
-            model_name: version.model_name,
-            prompt_name: version.prompt_name || version.name,
-            full_data: version
-        });
-
         const versionNumber = version.version || 'N/A';
         const promptName = version.prompt_name || version.name || 'N/A';
         const createdAt = version.created_at || version.timestamp || new Date().toISOString();
-        const tags = Array.isArray(version.tags) ? version.tags.join(', ') : 'Nessun tag';
 
         // Popola i dati base
         const versionTag = clone.querySelector('.version-tag-clean');
         versionTag.textContent = `v${versionNumber}`;
 
         const versionMeta = clone.querySelector('.version-meta');
-        versionMeta.textContent = `${this.formatDate(createdAt)} · ${tags}`;
+        versionMeta.textContent = `${this.formatDate(createdAt)}`;
 
         // Aggiungi metriche
         const metricsContainer = clone.querySelector('.version-metrics-container');
@@ -405,67 +384,64 @@ const PromptsLayout = {
     /**
      * Mostra i dettagli della versione in un modal
      */
-    showVersionModal(versionData) {
+    async showVersionModal(versionData) {
         // Rimuovi modal esistente se presente
         const existingModal = document.getElementById('versionModal');
         if (existingModal) {
             existingModal.remove();
         }
 
+        // Carica i dati dei modelli PRIMA di creare il modal
+        let modelsData = null;
+        try {
+            const url = `/api/prompts/${encodeURIComponent(versionData.name || versionData.prompt_name)}/versions/${versionData.version}/models`;
+            const response = await fetch(url);
+            if (response.ok) {
+                const data = await response.json();
+                modelsData = data.models;
+            }
+        } catch (error) {
+            console.error('Error loading models data for metrics:', error);
+        }
+
         // Crea modal usando il template
         const template = document.getElementById('version-modal-template');
         const modal = template.content.cloneNode(true);
 
-        // Popola i dati del modal
-        this.populateModalData(modal, versionData);
+        // Popola i dati del modal passando anche i dati dei modelli
+        this.populateModalData(modal, versionData, modelsData);
 
         // Aggiungi il modal al body
         document.body.appendChild(modal);
 
         // Aggiungi event listeners
         this.setupModalEventListeners();
+
+        // Ora che il modal è nel DOM, carica il confronto modelli (per la sezione visuale)
+        this.loadModelComparison(
+            versionData.name || versionData.prompt_name,
+            versionData.version,
+            versionData.id,
+            modelsData // Passa i dati già caricati per evitare doppia chiamata
+        );
     },
 
     /**
      * Popola i dati nel modal template
      */
-    populateModalData(modal, versionData) {
+    populateModalData(modal, versionData, modelsData = null) {
         const systemPrompt = versionData.system_prompt || 'Nessun prompt di sistema';
         const userPrompt = versionData.user_prompt || 'Nessun prompt utente';
         const metadata = versionData.metadata ? JSON.stringify(versionData.metadata, null, 2) : 'Nessun metadata';
-        const tags = Array.isArray(versionData.tags) ? versionData.tags.join(', ') : 'Nessun tag';
         const model = versionData.model_name || versionData.model || versionData.metadata?.model || 'N/A';
-
-        // Debug: verifica dati del modal
-        console.log('Modal version data:', {
-            id: versionData.id,
-            version: versionData.version,
-            name: versionData.name || versionData.prompt_name,
-            model_name: versionData.model_name,
-            model_resolved: model,
-            full_data: versionData
-        });
 
         // Popola header
         modal.querySelector('.modal-prompt-name').textContent = versionData.name || versionData.prompt_name;
         modal.querySelector('.modal-version-number').textContent = `v${versionData.version}`;
-        modal.querySelector('.modal-model-badge').textContent = model;
 
         // Popola contenuti prompt
         modal.querySelector('.system-prompt-content').textContent = systemPrompt;
         modal.querySelector('.user-prompt-content').textContent = userPrompt;
-
-        // Popola metadata
-        modal.querySelector('.creation-date').textContent = this.formatDate(versionData.timestamp || versionData.created_at);
-        modal.querySelector('.tags-list').textContent = tags;
-        modal.querySelector('.model-name').textContent = model;
-
-        // Popola sezioni opzionali
-        const gitCommitSection = modal.querySelector('.git-commit-section');
-        if (versionData.git_commit) {
-            gitCommitSection.style.display = 'block';
-            modal.querySelector('.git-commit').textContent = versionData.git_commit;
-        }
 
         const createdBySection = modal.querySelector('.created-by-section');
         if (versionData.created_by) {
@@ -479,15 +455,31 @@ const PromptsLayout = {
             modal.querySelector('.metadata-json').textContent = metadata;
         }
 
-        // Popola metriche
+        // Popola metriche con dati aggregati di tutti i modelli
         const metricsSection = modal.querySelector('.metrics-section');
-        metricsSection.appendChild(this.createModalMetricsSection(versionData));
+        metricsSection.appendChild(this.createModalMetricsSection(versionData, modelsData));
+
+        // Aggiungi sezione model comparison dopo le metriche nel modal-body
+        const modalBody = modal.querySelector('.modal-body');
+        const comparisonTemplate = document.getElementById('model-comparison-section-template');
+        const comparisonSection = comparisonTemplate.content.cloneNode(true);
+
+        // Inserisci dopo la metrics-section
+        const metadataGrid = modalBody.querySelector('.metadata-grid');
+        if (metadataGrid) {
+            modalBody.insertBefore(comparisonSection, metadataGrid);
+        } else {
+            modalBody.appendChild(comparisonSection);
+        }
+
+        // NOTA: loadModelComparison verrà chiamato dopo che il modal è nel DOM
+        // vedi showVersionModal()
     },
 
     /**
-     * Crea la sezione metriche del modal
+     * Crea la sezione metriche del modal (aggregata per tutti i modelli)
      */
-    createModalMetricsSection(versionData) {
+    createModalMetricsSection(versionData, modelsData = null) {
         const summary = versionData.metrics_summary || {};
         const hasMetrics = summary.call_count > 0;
 
@@ -499,10 +491,12 @@ const PromptsLayout = {
             const section = clone.querySelector('.modal-metrics-section');
             section.style.borderLeftColor = '#64748b';
             clone.querySelector('.metrics-title').style.color = '#64748b';
-            clone.querySelector('.metrics-title').textContent = '📊 Performance Metrics';
+            clone.querySelector('.metrics-title').textContent = '📊 Performance Metrics (All Models)';
 
             const container = clone.querySelector('.metrics-grid');
-            container.innerHTML = '<p style="color: #64748b; margin: 0; font-style: italic; text-align: center;">No metrics data available for this version</p>';
+            const noMetricsTemplate = document.getElementById('no-metrics-message-template');
+            container.innerHTML = '';
+            container.appendChild(noMetricsTemplate.content.cloneNode(true));
 
             return clone;
         }
@@ -510,20 +504,52 @@ const PromptsLayout = {
         const template = document.getElementById('modal-metrics-section-template');
         const clone = template.content.cloneNode(true);
 
-        const callCount = summary.call_count || 0;
-        const avgTokens = Math.round(summary.avg_total_tokens || 0);
-        const totalCost = (summary.total_cost || 0).toFixed(4);
-        const avgLatency = Math.round(summary.avg_latency || 0);
-        const avgQuality = (summary.avg_quality || 0).toFixed(2);
-        const successRate = (summary.success_rate * 100 || 0).toFixed(1);
+        // Se abbiamo dati dei modelli, calcola metriche aggregate
+        let callCount, avgTokens, totalCost, avgLatency, avgQuality, successRate;
+
+        if (modelsData && Object.keys(modelsData).length > 0) {
+            // Aggrega dati da tutti i modelli
+            const models = Object.values(modelsData);
+
+            callCount = models.reduce((sum, m) => sum + (m.call_count || 0), 0);
+            totalCost = models.reduce((sum, m) => sum + (m.total_cost || 0), 0);
+
+            // Media pesata per tokens, latency e quality
+            const totalCalls = callCount || 1; // evita divisione per zero
+            avgTokens = Math.round(
+                models.reduce((sum, m) => sum + (m.avg_total_tokens || 0) * (m.call_count || 0), 0) / totalCalls
+            );
+            avgLatency = Math.round(
+                models.reduce((sum, m) => sum + (m.avg_latency || 0) * (m.call_count || 0), 0) / totalCalls
+            );
+            avgQuality =
+                models.reduce((sum, m) => sum + (m.avg_quality || 0) * (m.call_count || 0), 0) / totalCalls;
+
+            // Success rate aggregato
+            const totalSuccess = models.reduce((sum, m) => sum + ((m.success_rate || 0) * (m.call_count || 0)), 0);
+            successRate = (totalSuccess / totalCalls) * 100;
+        } else {
+            // Fallback ai dati originali
+            callCount = summary.call_count || 0;
+            avgTokens = Math.round(summary.avg_total_tokens || 0);
+            totalCost = summary.total_cost || 0;
+            avgLatency = Math.round(summary.avg_latency || 0);
+            avgQuality = summary.avg_quality || 0;
+            successRate = (summary.success_rate * 100) || 0;
+        }
+
+        successRate = Math.min(successRate, 100);
+
+        // Aggiorna il titolo per chiarire che sono dati aggregati
+        clone.querySelector('.metrics-title').textContent = '📊 Performance Metrics (All Models)';
 
         // Popola i valori
         clone.querySelector('.metric-calls .metric-value').textContent = callCount;
         clone.querySelector('.metric-tokens .metric-value').textContent = avgTokens;
-        clone.querySelector('.metric-cost .metric-value').textContent = `€${totalCost}`;
+        clone.querySelector('.metric-cost .metric-value').textContent = `€${totalCost.toFixed(4)}`;
         clone.querySelector('.metric-latency .metric-value').textContent = `${avgLatency}ms`;
-        clone.querySelector('.metric-quality .metric-value').textContent = avgQuality;
-        clone.querySelector('.metric-success .metric-value').textContent = `${successRate}%`;
+        clone.querySelector('.metric-quality .metric-value').textContent = avgQuality.toFixed(2);
+        clone.querySelector('.metric-success .metric-value').textContent = `${successRate.toFixed(1)}%`;
 
         return clone;
     },
@@ -765,7 +791,6 @@ const PromptsLayout = {
                 minute: '2-digit'
             });
         } catch (error) {
-            console.warn('Errore nel formato data:', dateString, error);
             return 'Data non valida';
         }
     },
@@ -804,6 +829,197 @@ const PromptsLayout = {
             clearTimeout(timeout);
             timeout = setTimeout(later, wait);
         };
+    },
+
+    /**
+     * Carica e mostra il confronto tra modelli per una versione
+     */
+    async loadModelComparison(promptName, version, versionId, preloadedModelsData = null) {
+        const container = document.getElementById('model-comparison-grid');
+
+        if (!container) {
+            console.error('model-comparison-grid container not found');
+            return;
+        }
+
+        const loadingTemplate = document.getElementById('model-comparison-loading-template');
+        container.innerHTML = '';
+        container.appendChild(loadingTemplate.content.cloneNode(true));
+
+        try {
+            let data;
+
+            // Usa i dati precaricati se disponibili
+            if (preloadedModelsData) {
+                data = { models: preloadedModelsData, total_models: Object.keys(preloadedModelsData).length };
+            } else {
+                // Altrimenti carica da API
+                const url = `/api/prompts/${encodeURIComponent(promptName)}/versions/${version}/models`;
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('API Error:', response.status, errorText);
+                    throw new Error(`Failed to load model comparison: ${response.status} - ${errorText}`);
+                }
+
+                data = await response.json();
+            }
+
+            if (!data.models || Object.keys(data.models).length === 0) {
+                const emptyTemplate = document.getElementById('model-comparison-empty-template');
+                const emptyClone = emptyTemplate.content.cloneNode(true);
+
+                emptyClone.querySelector('.empty-icon-large').textContent = '📊';
+                emptyClone.querySelector('.empty-message-primary').textContent = 'No model-specific data available yet';
+                const secondaryMsg = emptyClone.querySelector('.empty-message-secondary');
+                secondaryMsg.textContent = 'Start logging metrics with different models to see performance comparison';
+                secondaryMsg.style.fontSize = '0.85rem';
+                secondaryMsg.style.marginTop = '0.5rem';
+                secondaryMsg.style.opacity = '0.8';
+
+                container.innerHTML = '';
+                container.appendChild(emptyClone);
+                return;
+            }
+
+            // Ordina i modelli per numero di chiamate (più usati prima)
+            const sortedModels = Object.entries(data.models)
+                .sort(([, a], [, b]) => b.call_count - a.call_count);
+
+            // Identifica i migliori modelli per ogni metrica
+            const best = this.findBestModels(data.models);
+
+            container.innerHTML = sortedModels
+                .map(([modelName, stats]) => this.createModelCard(modelName, stats, best))
+                .join('');
+
+        } catch (error) {
+            console.error('Error loading model comparison:', error);
+
+            const emptyTemplate = document.getElementById('model-comparison-empty-template');
+            const errorClone = emptyTemplate.content.cloneNode(true);
+            const emptyDiv = errorClone.querySelector('.model-comparison-empty');
+
+            emptyDiv.style.color = '#ef4444';
+            errorClone.querySelector('.empty-icon-large').textContent = '⚠️';
+            errorClone.querySelector('.empty-message-primary').textContent = 'Error loading model comparison';
+            const secondaryMsg = errorClone.querySelector('.empty-message-secondary');
+            secondaryMsg.textContent = error.message;
+            secondaryMsg.style.fontSize = '0.85rem';
+            secondaryMsg.style.marginTop = '0.5rem';
+
+            container.innerHTML = '';
+            container.appendChild(errorClone);
+        }
+    },
+
+    /**
+     * Identifica i modelli migliori per ogni metrica
+     */
+    findBestModels(models) {
+        const modelList = Object.entries(models);
+
+        if (modelList.length === 0) return {};
+
+        const best = {
+            latency: modelList.reduce(([nameA, a], [nameB, b]) =>
+                (b.avg_latency && (!a.avg_latency || b.avg_latency < a.avg_latency)) ? [nameB, b] : [nameA, a]
+            ),
+            cost: modelList.reduce(([nameA, a], [nameB, b]) =>
+                (b.avg_cost && (!a.avg_cost || b.avg_cost < a.avg_cost)) ? [nameB, b] : [nameA, a]
+            ),
+            quality: modelList.reduce(([nameA, a], [nameB, b]) =>
+                ((b.avg_quality || 0) > (a.avg_quality || 0)) ? [nameB, b] : [nameA, a]
+            ),
+            success_rate: modelList.reduce(([nameA, a], [nameB, b]) =>
+                (b.success_rate > a.success_rate) ? [nameB, b] : [nameA, a]
+            )
+        };
+
+        return {
+            latency: best.latency[0],
+            cost: best.cost[0],
+            quality: best.quality[0],
+            success_rate: best.success_rate[0]
+        };
+    },
+
+    /**
+     * Crea una card per un modello usando il template HTML
+     */
+    createModelCard(modelName, stats, best) {
+        const isBestLatency = best.latency === modelName;
+        const isBestCost = best.cost === modelName;
+        const isBestQuality = best.quality === modelName;
+        const isBestSuccess = best.success_rate === modelName;
+
+        // Clona il template della card
+        const template = document.getElementById('model-card-template');
+        const card = template.content.cloneNode(true);
+        const cardElement = card.querySelector('.model-card');
+
+        // Aggiungi classe highlight se è il migliore in qualche metrica
+        if (isBestLatency || isBestCost || isBestQuality || isBestSuccess) {
+            cardElement.classList.add('highlight');
+        }
+
+        // Aggiungi badge per i migliori modelli usando il template
+        const badgesContainer = card.querySelector('.model-badges');
+        const badgeTemplate = document.getElementById('best-badge-template');
+        const badgeConfigs = [];
+
+        if (isBestLatency) badgeConfigs.push({ icon: '⚡', text: 'Fastest' });
+        if (isBestCost) badgeConfigs.push({ icon: '💰', text: 'Cheapest' });
+        if (isBestQuality) badgeConfigs.push({ icon: '⭐', text: 'Best Quality' });
+        if (isBestSuccess) badgeConfigs.push({ icon: '✅', text: 'Most Reliable' });
+
+        if (badgeConfigs.length > 0) {
+            badgeConfigs.forEach(config => {
+                const badge = badgeTemplate.content.cloneNode(true);
+                const badgeSpan = badge.querySelector('.best-badge');
+                badgeSpan.textContent = `${config.icon} ${config.text}`;
+                badgesContainer.appendChild(badge);
+            });
+        } else {
+            badgesContainer.remove();
+        }
+
+        // Popola header
+        card.querySelector('.model-name').textContent = `🤖 ${modelName}`;
+        card.querySelector('.model-badge').textContent = `${stats.call_count} calls`;
+
+        // Popola metriche
+        if (stats.total_cost) {
+            card.querySelector('.metric-total-cost .metric-value').textContent =
+                `€${stats.total_cost.toFixed(4)}`;
+        } else {
+            card.querySelector('.metric-total-cost').remove();
+        }
+
+        if (stats.min_latency && stats.max_latency) {
+            card.querySelector('.metric-latency-range .metric-value').textContent =
+                `${stats.min_latency}ms - ${stats.max_latency}ms`;
+            card.querySelector('.metric-latency-range .metric-value').style.fontSize = '0.85rem';
+        } else {
+            card.querySelector('.metric-latency-range').remove();
+        }
+
+        if (stats.avg_total_tokens) {
+            card.querySelector('.metric-avg-tokens .metric-value').textContent =
+                Math.round(stats.avg_total_tokens);
+        } else {
+            card.querySelector('.metric-avg-tokens').remove();
+        }
+
+        if (stats.avg_quality !== null) {
+            card.querySelector('.metric-avg-quality .metric-value').textContent =
+                `${(stats.avg_quality * 100).toFixed(1)}%`;
+        } else {
+            card.querySelector('.metric-avg-quality').remove();
+        }
+
+        return cardElement.outerHTML;
     }
 };
 

@@ -357,8 +357,268 @@ print(f"Required samples per variant: {required_samples}")
 statistical_test.print_statistical_report()
 ```
 
+## 🤖 Multi-Model Performance Benchmarking
+
+### Automated Model Comparison
+
+```python
+from prompt_versioner import PromptVersioner
+import asyncio
+from typing import List, Dict
+import time
+
+class ModelBenchmark:
+    """Automated benchmarking across multiple LLM models"""
+
+    def __init__(self, project_name: str):
+        self.pv = PromptVersioner(project_name=project_name)
+        self.models = {
+            "gpt-4o": {"cost_per_1k": 0.005, "api": "openai"},
+            "gpt-4o-mini": {"cost_per_1k": 0.00015, "api": "openai"},
+            "claude-3-5-sonnet": {"cost_per_1k": 0.003, "api": "anthropic"},
+            "gemini-pro": {"cost_per_1k": 0.00025, "api": "google"}
+        }
+
+    async def benchmark_prompt(
+        self,
+        prompt_name: str,
+        system_prompt: str,
+        user_prompt: str,
+        test_cases: List[Dict],
+        calls_per_model: int = 100
+    ):
+        """Run comprehensive benchmark across all models"""
+
+        # Save prompt version
+        version = self.pv.save_version(
+            name=prompt_name,
+            system_prompt=system_prompt,
+            user_prompt=user_prompt
+        )
+
+        print(f"🚀 Starting benchmark for {prompt_name} v{version}")
+        print(f"📊 Testing {len(self.models)} models with {calls_per_model} calls each")
+
+        results = {}
+
+        for model_name, model_config in self.models.items():
+            print(f"\n🤖 Testing {model_name}...")
+            model_results = await self._test_model(
+                model_name=model_name,
+                model_config=model_config,
+                prompt_name=prompt_name,
+                version=version,
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                test_cases=test_cases,
+                num_calls=calls_per_model
+            )
+            results[model_name] = model_results
+
+        self._print_benchmark_summary(results)
+        return results
+
+    async def _test_model(
+        self,
+        model_name: str,
+        model_config: Dict,
+        prompt_name: str,
+        version: str,
+        system_prompt: str,
+        user_prompt: str,
+        test_cases: List[Dict],
+        num_calls: int
+    ) -> Dict:
+        """Test a single model"""
+
+        total_cost = 0
+        total_latency = 0
+        total_quality = 0
+        successful_calls = 0
+
+        for i in range(num_calls):
+            test_case = test_cases[i % len(test_cases)]
+
+            try:
+                # Simulate LLM call (replace with actual API call)
+                start_time = time.time()
+                response = await self._call_llm(
+                    model_name,
+                    system_prompt,
+                    user_prompt.format(**test_case["input"])
+                )
+                latency = int((time.time() - start_time) * 1000)
+
+                # Calculate metrics
+                prompt_tokens = len(system_prompt.split()) + len(user_prompt.split())
+                completion_tokens = len(response.split())
+                total_tokens = prompt_tokens + completion_tokens
+                cost = (total_tokens / 1000) * model_config["cost_per_1k"]
+                quality = self._evaluate_quality(response, test_case.get("expected"))
+
+                # Log metrics
+                self.pv.log_metrics(
+                    prompt_name=prompt_name,
+                    version=version,
+                    model_name=model_name,
+                    prompt_tokens=prompt_tokens,
+                    completion_tokens=completion_tokens,
+                    latency_ms=latency,
+                    quality_score=quality,
+                    success=True,
+                    cost=cost
+                )
+
+                total_cost += cost
+                total_latency += latency
+                total_quality += quality
+                successful_calls += 1
+
+            except Exception as e:
+                print(f"❌ Error on call {i+1}: {e}")
+                self.pv.log_metrics(
+                    prompt_name=prompt_name,
+                    version=version,
+                    model_name=model_name,
+                    success=False
+                )
+
+        return {
+            "total_calls": num_calls,
+            "successful_calls": successful_calls,
+            "avg_cost": total_cost / successful_calls if successful_calls > 0 else 0,
+            "avg_latency": total_latency / successful_calls if successful_calls > 0 else 0,
+            "avg_quality": total_quality / successful_calls if successful_calls > 0 else 0,
+            "success_rate": (successful_calls / num_calls) * 100
+        }
+
+    async def _call_llm(self, model: str, system_prompt: str, user_prompt: str) -> str:
+        """Call LLM API - implement your actual API calls here"""
+        # Placeholder - replace with actual API calls
+        await asyncio.sleep(0.1)  # Simulate network latency
+        return "Simulated response"
+
+    def _evaluate_quality(self, response: str, expected: str = None) -> float:
+        """Evaluate response quality - implement your evaluation logic"""
+        # Placeholder - implement actual quality evaluation
+        import random
+        return random.uniform(0.7, 1.0)
+
+    def _print_benchmark_summary(self, results: Dict):
+        """Print formatted benchmark results"""
+        print("\n" + "="*60)
+        print("📊 BENCHMARK SUMMARY")
+        print("="*60)
+
+        # Find best performers
+        best_cost = min(results.items(), key=lambda x: x[1]["avg_cost"])
+        best_latency = min(results.items(), key=lambda x: x[1]["avg_latency"])
+        best_quality = max(results.items(), key=lambda x: x[1]["avg_quality"])
+        best_reliability = max(results.items(), key=lambda x: x[1]["success_rate"])
+
+        for model_name, stats in results.items():
+            print(f"\n🤖 {model_name}")
+            print(f"   💸 Avg Cost: €{stats['avg_cost']:.6f} {'💰 CHEAPEST' if model_name == best_cost[0] else ''}")
+            print(f"   ⚡ Avg Latency: {stats['avg_latency']:.0f}ms {'🚀 FASTEST' if model_name == best_latency[0] else ''}")
+            print(f"   ⭐ Avg Quality: {stats['avg_quality']:.2%} {'🏆 BEST QUALITY' if model_name == best_quality[0] else ''}")
+            print(f"   ✅ Success Rate: {stats['success_rate']:.1f}% {'🎯 MOST RELIABLE' if model_name == best_reliability[0] else ''}")
+
+# Usage
+async def run_benchmark():
+    benchmark = ModelBenchmark(project_name="model-comparison")
+
+    test_cases = [
+        {
+            "input": {"text": "This product is amazing!"},
+            "expected": "positive"
+        },
+        {
+            "input": {"text": "Terrible experience."},
+            "expected": "negative"
+        },
+        # Add more test cases...
+    ]
+
+    results = await benchmark.benchmark_prompt(
+        prompt_name="sentiment-classifier",
+        system_prompt="You are a sentiment analysis expert.",
+        user_prompt="Classify the sentiment of: {text}",
+        test_cases=test_cases,
+        calls_per_model=250
+    )
+
+# Run the benchmark
+# asyncio.run(run_benchmark())
+```
+
+### Cross-Model Prompt Optimization
+
+```python
+from prompt_versioner import PromptVersioner, VersionBump
+
+def optimize_prompt_across_models(base_prompt: str, variations: List[str], models: List[str]):
+    """Test prompt variations across multiple models to find optimal combination"""
+
+    pv = PromptVersioner(project_name="prompt-optimization")
+    results = {}
+
+    for i, variation in enumerate(variations):
+        version = pv.save_version(
+            name="optimized-prompt",
+            system_prompt=variation,
+            user_prompt="Process: {input}",
+            bump_type=VersionBump.MINOR if i > 0 else VersionBump.MAJOR
+        )
+
+        results[version] = {}
+
+        for model in models:
+            # Test this variation with this model
+            metrics = test_prompt_with_model(variation, model)
+
+            pv.log_metrics(
+                prompt_name="optimized-prompt",
+                version=version,
+                model_name=model,
+                **metrics
+            )
+
+            results[version][model] = metrics
+
+    # Analyze results to find best prompt-model combination
+    best_combo = find_best_combination(results)
+    print(f"🏆 Best combination: Version {best_combo['version']} with {best_combo['model']}")
+    return best_combo
+
+def find_best_combination(results: Dict) -> Dict:
+    """Find the optimal prompt version + model combination"""
+    best_score = 0
+    best_combo = {}
+
+    for version, models_data in results.items():
+        for model, metrics in models_data.items():
+            # Calculate composite score (customize weights as needed)
+            score = (
+                metrics['quality_score'] * 0.5 +  # 50% weight on quality
+                (1 / metrics['latency_ms']) * 1000 * 0.3 +  # 30% on speed
+                (1 / metrics['cost']) * 0.2  # 20% on cost
+            )
+
+            if score > best_score:
+                best_score = score
+                best_combo = {
+                    'version': version,
+                    'model': model,
+                    'metrics': metrics,
+                    'score': score
+                }
+
+    return best_combo
+```
+
 ## 📚 Next Steps
 
+- [Multi-Model Comparison](../user-guide/multi-model-comparison.md) - Detailed guide on model comparison
 - [Integrations](integrations.md) - Learn about system integrations
 - [Best Practices](best-practices.md) - Comprehensive best practices guide
 - [Performance Monitoring](../user-guide/performance-monitoring.md) - Advanced monitoring techniques

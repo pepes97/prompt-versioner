@@ -18,11 +18,13 @@ In the rapidly evolving world of AI and Large Language Models, managing prompt v
 ### 🔧 Core Functionality
 - **Versioning**: Automatic version management with MAJOR/MINOR/PATCH bumps
 - **Metrics Tracking**: Comprehensive LLM call metrics (tokens, latency, quality, cost)
+- **Multi-Model Comparison**: Test and compare performance across different LLM models
 - **Export/Import**: Backup and share prompts with full history
 - **Git Integration**: Optional Git integration for version control
 
 ### 🧪 Advanced Testing & Monitoring
 - **A/B Testing**: Built-in statistical framework for comparing prompt versions
+- **Model Benchmarking**: Automatic identification of best-performing models
 - **Performance Monitoring**: Automated regression detection and alerting
 - **Real-time Analytics**: Live metrics and performance dashboards
 - **Custom Alerts**: Configure thresholds for cost, latency, and quality metrics

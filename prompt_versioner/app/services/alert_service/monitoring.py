@@ -2,6 +2,7 @@
 
 from typing import Dict, List, Optional, Callable, Any
 from prompt_versioner.app.models import Alert, AlertType
+import logging
 
 
 class PerformanceMonitor:
@@ -14,7 +15,7 @@ class PerformanceMonitor:
             versioner: PromptVersioner instance
         """
         self.versioner = versioner
-        self.alert_handlers: List[Callable[[Alert], None]] = []
+        self.alert_handlers = []  # type: List[Callable[[Alert], None]]
 
     def add_alert_handler(self, handler: Callable[[Alert], None]) -> None:
         """Add alert handler function.
@@ -171,6 +172,6 @@ class PerformanceMonitor:
                 try:
                     handler(alert)
                 except Exception as e:
-                    print(f"Alert handler failed: {e}")
+                    logging.warning(f"Alert handler failed: {e}")
 
         return alerts

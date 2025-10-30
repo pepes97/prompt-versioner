@@ -138,6 +138,7 @@ nav:
     - Core Concepts: user-guide/core-concepts.md
     - Version Management: user-guide/version-management.md
     - Metrics & Tracking: user-guide/metrics-tracking.md
+    - Multi-Model Comparison: user-guide/multi-model-comparison.md
     - A/B Testing: user-guide/ab-testing.md
     - Performance Monitoring: user-guide/performance-monitoring.md
     - Web Dashboard: user-guide/web-dashboard.md

@@ -311,3 +311,62 @@ class MetricsStorage:
         """Validate metric name to prevent SQL injection."""
         if metric_name not in MetricsStorage.ALLOWED_METRIC_COLUMNS:
             raise ValueError(f"Invalid metric name: {metric_name}")
+
+    def get_summary_by_model(self, version_id: int) -> Dict[str, Dict[str, Any]]:
+        """Get metrics summary grouped by model for a specific version.
+
+        Args:
+            version_id: Version ID
+
+        Returns:
+            Dict mapping model_name to its summary stats
+        """
+        rows = self.db.execute(
+            """
+            SELECT
+                model_name,
+                COUNT(*) as call_count,
+                AVG(input_tokens) as avg_input_tokens,
+                AVG(output_tokens) as avg_output_tokens,
+                AVG(total_tokens) as avg_total_tokens,
+                SUM(total_tokens) as total_tokens_used,
+                AVG(cost_eur) as avg_cost,
+                SUM(cost_eur) as total_cost,
+                AVG(latency_ms) as avg_latency,
+                MIN(latency_ms) as min_latency,
+                MAX(latency_ms) as max_latency,
+                AVG(quality_score) as avg_quality,
+                AVG(accuracy) as avg_accuracy,
+                SUM(CASE WHEN success = 1 THEN 1 ELSE 0 END) as success_count,
+                COUNT(*) - SUM(CASE WHEN success = 1 THEN 1 ELSE 0 END) as failure_count
+            FROM prompt_metrics
+            WHERE version_id = ? AND model_name IS NOT NULL
+            GROUP BY model_name
+            ORDER BY call_count DESC
+            """,
+            (version_id,),
+            fetch="all",
+        )
+
+        result = {}
+        for row in rows:
+            model_name = row["model_name"]
+            result[model_name] = {
+                "call_count": row["call_count"],
+                "avg_input_tokens": round(row["avg_input_tokens"] or 0, 2),
+                "avg_output_tokens": round(row["avg_output_tokens"] or 0, 2),
+                "avg_total_tokens": round(row["avg_total_tokens"] or 0, 2),
+                "total_tokens_used": row["total_tokens_used"] or 0,
+                "avg_cost": round(row["avg_cost"] or 0, 6),
+                "total_cost": round(row["total_cost"] or 0, 6),
+                "avg_latency": round(row["avg_latency"] or 0, 2),
+                "min_latency": round(row["min_latency"] or 0, 2),
+                "max_latency": round(row["max_latency"] or 0, 2),
+                "avg_quality": (round(row["avg_quality"], 3) if row["avg_quality"] else None),
+                "avg_accuracy": (round(row["avg_accuracy"], 3) if row["avg_accuracy"] else None),
+                "success_count": row["success_count"],
+                "failure_count": row["failure_count"],
+                "success_rate": round((row["success_count"] / row["call_count"]) * 100, 2),
+            }
+
+        return result

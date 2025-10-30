@@ -160,6 +160,48 @@ pv.save_version(
 
 ## 📊 Metrics and Monitoring
 
+### Multi-Model Performance Tracking
+
+When testing across multiple models, always include the `model_name` parameter:
+
+```python
+# ✅ Good: Track model-specific performance
+models_to_test = ["gpt-4o", "gpt-4o-mini", "claude-3-5-sonnet", "gemini-pro"]
+
+for model in models_to_test:
+    response = call_llm(model, prompt)
+
+    pv.log_metrics(
+        prompt_name="classifier",
+        version="1.0.0",
+        model_name=model,  # ✅ Always specify the model
+        prompt_tokens=response.prompt_tokens,
+        completion_tokens=response.completion_tokens,
+        latency_ms=response.latency,
+        quality_score=evaluate_response(response),
+        cost=calculate_cost(model, response)
+    )
+
+# ❌ Avoid: Missing model_name or inconsistent naming
+pv.log_metrics(
+    prompt_name="classifier",
+    version="1.0.0",
+    # model_name missing - can't compare models!
+    ...
+)
+
+# ❌ Avoid: Inconsistent model naming
+pv.log_metrics(model_name="GPT-4")  # Inconsistent casing
+pv.log_metrics(model_name="gpt4")   # Missing delimiter
+pv.log_metrics(model_name="openai-gpt-4-turbo")  # Too verbose
+```
+
+**Best practices for model naming:**
+- Use consistent, lowercase names: `gpt-4o`, `claude-3-5-sonnet`, `gemini-pro`
+- Match official provider naming where possible
+- Keep names concise but descriptive
+- Use hyphens for multi-word names
+
 ### Comprehensive Metrics Tracking
 
 ```python
@@ -170,7 +212,7 @@ class MetricsTracker:
         self.pv = pv
 
     def log_production_metrics(self, prompt_name, version, llm_response,
-                             user_context=None, quality_score=None):
+                             model_name=None, user_context=None, quality_score=None):
         """Log comprehensive production metrics"""
 
         # Calculate quality if not provided

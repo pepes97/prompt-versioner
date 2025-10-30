@@ -153,7 +153,7 @@ if "news_summarizer" in all_prompts:
 
     # Show version details
     for version in versions:
-        metrics_count = len(pv.get_metrics("news_summarizer", version["version"]))
+        metrics_count = len(pv.get_version("news_summarizer", version["version"]))
         print(f"   Version {version['version']}: {metrics_count} metrics logged")
 
 print("\n🎉 Example completed successfully!")

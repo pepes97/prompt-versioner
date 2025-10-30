@@ -33,6 +33,7 @@ Then open your browser to: `http://localhost:8080`
 - **Real-time Metrics**: Live performance data
 - **Quality Trends**: Track quality scores over time
 - **Cost Analysis**: Monitor usage costs
+- **Multi-Model Comparison**: Compare performance across different LLM models with automatic "best model" badges
 
 ## 🚀 Starting the Dashboard
 
@@ -88,6 +89,42 @@ pv.start_dashboard(
 │ [View Code] [Edit] [Export] [Compare]          │
 └─────────────────────────────────────────────────┘
 ```
+
+### Model Performance Comparison
+
+When you test the same prompt with multiple models, the dashboard automatically shows:
+
+```
+┌─────────────────────────────────────────────────┐
+│ 🤖 MODEL PERFORMANCE COMPARISON                │
+├─────────────────────────────────────────────────┤
+│ ┌─────────────────┐  ┌─────────────────┐      │
+│ │ gpt-4o          │  │ claude-3-sonnet │      │
+│ │ ⚡ Fastest      │  │ ⭐ Best Quality │      │
+│ │ 250 calls       │  │ 250 calls       │      │
+│ │ €0.0245         │  │ €0.0315         │      │
+│ │ 450-1850ms      │  │ 520-2100ms      │      │
+│ │ Avg: 156 tokens │  │ Avg: 142 tokens │      │
+│ │ Quality: 95.2%  │  │ Quality: 96.1%  │      │
+│ └─────────────────┘  └─────────────────┘      │
+│                                                 │
+│ ┌─────────────────┐  ┌─────────────────┐      │
+│ │ gpt-4o-mini     │  │ gemini-pro      │      │
+│ │ 💰 Cheapest     │  │ ✅ Most Reliable│      │
+│ │ 250 calls       │  │ 250 calls       │      │
+│ │ €0.0035         │  │ €0.0055         │      │
+│ │ 380-1520ms      │  │ 410-1680ms      │      │
+│ │ Avg: 149 tokens │  │ Avg: 138 tokens │      │
+│ │ Quality: 92.8%  │  │ Quality: 93.5%  │      │
+│ └─────────────────┘  └─────────────────┘      │
+└─────────────────────────────────────────────────┘
+```
+
+The system automatically identifies and highlights:
+- ⚡ **Fastest**: Lowest average latency
+- 💰 **Cheapest**: Lowest cost per call
+- ⭐ **Best Quality**: Highest quality score
+- ✅ **Most Reliable**: Highest success rate
 
 ## 🔗 API Integration
 

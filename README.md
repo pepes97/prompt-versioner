@@ -34,11 +34,13 @@ Prompt Versioner provides enterprise-grade prompt management with:
 ### 🔧 Core Functionality
 - Automatic MAJOR/MINOR/PATCH versioning
 - Metrics tracking: tokens, latency, quality, cost
+- Multi-model performance comparison
 - Export & share prompt history
 - Optional Git integration
 
 ### 🧪 Advanced Testing & Monitoring
 - A/B Testing framework
+- Model performance benchmarking
 - Automated regression detection
 - Live metrics dashboards
 - Custom alert thresholds
@@ -111,10 +113,13 @@ print("✅ Created first prompt version 1.0.0!")
 
 * Token usage, latency, cost analysis
 * Quality score tracking
+* Multi-model performance comparison with automatic "best model" detection
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/pepes97/prompt-versioner/main/docs/images/metrics-analytics.png" alt="Metrics Dashboard">
 </p>
+
+Model Comparison: Test the same prompt across different models (GPT-4, Claude, Gemini, etc.) and see aggregated metrics with automatic identification of the fastest, cheapest, and highest-quality model.
 
 #### 🧪 A/B Testing
 
@@ -172,6 +177,7 @@ Examples in [`examples/`](examples/) are fully functional:
 | basic_usage.py            | Getting started          |
 | version_management.py     | Advanced version control |
 | metrics_tracking.py       | Metrics logging          |
+| multi_models.py           | Multi-model comparison   |
 | ab_testing.py             | Statistical testing      |
 | performance_monitoring.py | Automated monitoring     |
 | summarization_example.py  | Real-world summarization |

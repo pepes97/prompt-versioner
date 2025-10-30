@@ -390,7 +390,6 @@
                         <span class="modal-icon">📄</span>
                         <span class="modal-prompt-name"></span>
                         <span class="modal-version-number"></span>
-                        <span class="modal-model-badge"></span>
                     </h2>
                 </div>
 
@@ -405,39 +404,23 @@
                         <div class="prompt-content user-prompt-content"></div>
                     </div>
 
-                    <div class="metrics-section">
-                        <!-- Metrics will be populated here -->
-                    </div>
-
-                    <div class="metadata-grid">
-                        <div class="metadata-item">
-                            <h4>📅 Creation Date</h4>
-                            <p class="creation-date"></p>
-                        </div>
-                        <div class="metadata-item">
-                            <h4>🏷️ Tags</h4>
-                            <p class="tags-list"></p>
-                        </div>
-                        <div class="metadata-item">
-                            <h4>🤖 Model</h4>
-                            <p class="model-name"></p>
-                        </div>
-                    </div>
-
-                    <div class="git-commit-section" style="display: none;">
-                        <h4>🔗 Git Commit</h4>
-                        <p class="git-commit"></p>
-                    </div>
-
                     <div class="created-by-section" style="display: none;">
                         <h4>👨‍💻 Creato da</h4>
                         <p class="created-by"></p>
                     </div>
 
                     <div class="metadata-json-section" style="display: none;">
-                        <h4>⚙️ Metadata</h4>
-                        <pre class="metadata-json"></pre>
+                        <h3 class="section-title">⚙️ Metadata</h3>
+                        <div class="metadata-json"></div>
                     </div>
+
+                    <div class="metrics-section">
+                        <!-- Metrics will be populated here -->
+                    </div>
+
+
+
+
                 </div>
             </div>
         </div>
@@ -523,6 +506,86 @@
                 </div>
             </div>
         </div>
+    </template>
+
+    <!-- Model Comparison Card Template -->
+    <template id="model-card-template">
+        <div class="model-card">
+            <div class="model-badges">
+                <!-- Best badges will be added here dynamically -->
+            </div>
+            <div class="model-card-header">
+                <span class="model-name"></span>
+                <span class="model-badge"></span>
+            </div>
+            <div class="model-metrics">
+                <div class="model-metric-row metric-total-cost">
+                    <span class="metric-label">💸 Total Cost</span>
+                    <span class="metric-value"></span>
+                </div>
+                <div class="model-metric-row metric-latency-range">
+                    <span class="metric-label">📊 Latency Range</span>
+                    <span class="metric-value"></span>
+                </div>
+                <div class="model-metric-row metric-avg-tokens">
+                    <span class="metric-label">🔢 Avg Tokens</span>
+                    <span class="metric-value"></span>
+                </div>
+                <div class="model-metric-row metric-avg-quality">
+                    <span class="metric-label">⭐ Avg Quality</span>
+                    <span class="metric-value"></span>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Best Badge Template -->
+    <template id="best-badge-template">
+        <span class="best-badge"></span>
+    </template>
+
+    <!-- Version Header Template -->
+    <template id="version-header-template">
+        <div class="version-header">
+            <h3>
+                <span class="version-header-icon">📄</span>
+                <span class="version-header-name"></span>
+                <span class="version-header-count"></span>
+            </h3>
+        </div>
+        <div class="version-list-clean" id="versionListClean"></div>
+    </template>
+
+    <!-- Model Comparison Section Template -->
+    <template id="model-comparison-section-template">
+        <h3 class="section-title metrics-title">
+                🤖 Model Performance Comparison
+        </h3>
+        <div class="model-comparison-section">
+
+            <div id="model-comparison-grid" class="model-comparison-grid">
+                <div class="model-comparison-loading">Loading model comparison...</div>
+            </div>
+        </div>
+    </template>
+
+    <!-- Model Comparison Empty State Template -->
+    <template id="model-comparison-empty-template">
+        <div class="model-comparison-empty">
+            <span class="empty-icon-large"></span>
+            <p class="empty-message-primary"></p>
+            <p class="empty-message-secondary"></p>
+        </div>
+    </template>
+
+    <!-- No Metrics Message Template -->
+    <template id="no-metrics-message-template">
+        <p style="color: #64748b; margin: 0; font-style: italic; text-align: center;">No metrics data available for this version</p>
+    </template>
+
+    <!-- Model Comparison Loading Template -->
+    <template id="model-comparison-loading-template">
+        <div class="model-comparison-loading">Loading model comparison...</div>
     </template>
 
     <!-- Diff Comparison Templates -->

@@ -74,3 +74,31 @@ def delete_prompt(name: str) -> Any:
             return jsonify({"success": False, "error": "Prompt not found."}), 404
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
+
+
+@prompts_bp.route("/<name>/versions/<version>/models", methods=["GET"])
+def get_version_models_stats(name: str, version: str) -> Any:
+    """Get per-model statistics for a specific version."""
+    try:
+        versioner = current_app.versioner  # type: ignore[attr-defined]
+        version_data = versioner.get_version(name, version)
+
+        if not version_data:
+            return (
+                jsonify({"error": f"Version {version} not found for prompt {name}"}),
+                404,
+            )
+
+        # Get metrics grouped by model
+        models_stats = versioner.storage.metrics.get_summary_by_model(version_data["id"])
+
+        return jsonify(
+            {
+                "prompt_name": name,
+                "version": version,
+                "models": models_stats,
+                "total_models": len(models_stats),
+            }
+        )
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

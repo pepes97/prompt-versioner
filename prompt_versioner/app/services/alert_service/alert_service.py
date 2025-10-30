@@ -3,6 +3,11 @@
 from typing import Any, Dict, List, Optional
 from prompt_versioner.app.services.alert_service.monitoring import PerformanceMonitor
 
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 
 class AlertService:
     """Service for performance monitoring and alerts."""
@@ -65,8 +70,7 @@ class AlertService:
                         }
                     )
             except Exception as e:
-                # Skip this prompt if there's an error
-                print(f"Error checking alerts for {prompt_name}: {e}")
+                logging.warning(f"Error checking alerts for prompt '{prompt_name}': {e}")
                 continue
 
         return all_alerts
