@@ -6,5 +6,6 @@ from prompt_versioner.cli.commands import prompts
 from prompt_versioner.cli.commands import diff
 from prompt_versioner.cli.commands import management
 from prompt_versioner.cli.commands import dashboard
+from prompt_versioner.cli.commands import pricing
 
-__all__ = ["init", "prompts", "diff", "management", "dashboard"]
+__all__ = ["init", "prompts", "diff", "management", "dashboard", "pricing"]

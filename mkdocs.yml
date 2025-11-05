@@ -155,6 +155,7 @@ nav:
       - Enums: api-reference/core/enums.md
     - CLI:
       - Commands: api-reference/cli/commands.md
+      - Pricing: api-reference/cli/pricing.md
       - Utils: api-reference/cli/utils.md
     - Storage:
       - Database: api-reference/storage/database.md
@@ -165,6 +166,7 @@ nav:
       - Analyzer: api-reference/metrics/analyzer.md
       - Calculator: api-reference/metrics/calculator.md
       - Models: api-reference/metrics/models.md
+      - Pricing: api-reference/metrics/pricing.md
     - Testing:
       - A/B Test: api-reference/testing/ab-test.md
       - Runner: api-reference/testing/runner.md

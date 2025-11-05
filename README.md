@@ -155,15 +155,32 @@ Model Comparison: Test the same prompt across different models (GPT-4, Claude, G
 ## 💻 CLI Interface
 
 ```bash
-pv init
-pv list
-pv versions <prompt>
-pv show <prompt> <version>
-pv diff <prompt> <v1> <v2>
-pv compare <prompt> <v1> <v2>
-pv delete <prompt> <version>
-pv rollback <prompt> <version>
-pv dashboard --port 5000
+# Initialization & Setup
+pv init                              # Initialize prompt versioner
+
+# Prompt Operations
+pv list                              # List all tracked prompts
+pv versions <prompt>                 # List versions of a prompt
+pv show <prompt> <version>           # Show version details
+
+# Model Pricing & Cost Estimation
+pv models                            # List all models with pricing
+pv models --sort-by input            # Sort by input price
+pv models --filter gpt               # Filter specific models
+pv estimate-cost <model> <in> <out>  # Estimate cost for usage
+pv compare-costs <in> <out>          # Compare costs across models
+
+# Version Comparison
+pv diff <prompt> <v1> <v2>           # Show diff between versions
+pv compare <prompt> <v1> <v2>        # Compare with metrics
+
+# Management
+pv delete <prompt> <version>         # Delete a version
+pv rollback <prompt> <version>       # Rollback to version
+pv clear-db                          # Clear database
+
+# Dashboard
+pv dashboard --port 5000             # Launch web dashboard
 ```
 
 ---

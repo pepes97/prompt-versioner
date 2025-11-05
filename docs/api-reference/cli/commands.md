@@ -31,6 +31,11 @@ prompt-versioner <command> --help
 - [`list`](#list) - List prompts and versions
 - [`show`](#show) - Display prompt details
 
+### Model Pricing & Cost Estimation
+- [`models`](pricing.md#models) - List available models with pricing
+- [`estimate-cost`](pricing.md#estimate-cost) - Estimate cost for specific usage
+- [`compare-costs`](pricing.md#compare-costs) - Compare costs across models
+
 ### Version Management
 - [`diff`](#diff) - Compare prompt versions
 - [`rollback`](#rollback) - Rollback to previous version

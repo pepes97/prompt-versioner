@@ -7,6 +7,87 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.6] - 2025-11-05
+
+### Added
+- **Model Pricing & Cost Estimation CLI Commands**: Complete pricing management system for LLM models
+  - New command `pv models`: List all available models with pricing information
+    - Table format with input/output prices per 1M tokens and average cost calculation
+    - Sorting options: `--sort-by {name,input,output,total}`
+    - Filtering: `--filter TEXT` for case-insensitive substring matching
+    - Limit results: `--limit N` to show top N models
+    - JSON export: `--format json` for programmatic usage
+    - Example cost calculations for top 3 cheapest models
+  - New command `pv estimate-cost`: Calculate cost estimates for specific model usage
+    - Arguments: `MODEL_NAME INPUT_TOKENS OUTPUT_TOKENS`
+    - Option `--calls N` for estimating multiple API calls
+    - Detailed breakdown showing cost per call and total cost
+    - Validation with helpful error messages for unknown models
+  - New command `pv compare-costs`: Compare costs across all models for given token usage
+    - Arguments: `INPUT_TOKENS OUTPUT_TOKENS`
+    - Option `--top N` to limit results (default: 5)
+    - Ranked table with relative cost comparison (e.g., "2.5x")
+    - Visual highlighting for top 3 cheapest models
+  - **16 supported models** with up-to-date pricing (Claude, GPT, Mistral families)
+  - Pricing data in EUR per 1M tokens (both input and output)
+
+### Changed
+- **CLI Architecture**:
+  - Created new module `prompt_versioner/cli/commands/pricing.py` for pricing commands
+  - Updated `prompt_versioner/cli/commands/__init__.py` to register pricing module
+  - Improved command organization with dedicated pricing functionality
+- **Documentation Structure**:
+  - README updated with new CLI commands section showing all pricing commands
+  - Added comprehensive pricing documentation: `docs/api-reference/cli/pricing.md`
+    - Detailed usage examples for all three commands
+    - Complete options reference
+    - Common use cases and workflows
+    - Tips for cost optimization
+  - Enhanced `docs/api-reference/cli/commands.md` with new "Model Pricing & Cost Estimation" category
+  - Updated `docs/getting-started/quick-start.md` with cost estimation section
+    - Python API examples
+    - CLI usage examples
+    - Integration with existing metrics tracking
+  - Added pricing documentation to `mkdocs.yml` navigation
+    - New entry under CLI Reference
+    - New entry under Metrics API Reference
+
+### Enhanced
+- **PricingManager class** (existing functionality now exposed via CLI):
+  - `list_models()`: Get all available models
+  - `get_pricing(model_name)`: Retrieve pricing for specific model
+  - `calculate_cost()`: Single call cost calculation
+  - `estimate_cost()`: Multi-call estimation with breakdown
+  - `compare_models()`: Cross-model cost comparison
+  - `get_cheapest_model()`: Find most cost-effective option
+- **Rich terminal output**: Tables with proper formatting, colors, and visual hierarchy
+- **User experience**:
+  - Helpful error messages with suggestions
+  - Automatic example calculations
+  - Progress indicators and info messages
+  - Consistent styling across all pricing commands
+
+### Documentation
+- Complete API reference for pricing module in `docs/api-reference/metrics/pricing.md`
+- Quick start guide updated with cost estimation examples
+- README CLI interface section reorganized with categorized commands
+- mkdocs navigation structure enhanced with pricing documentation links
+
+### Technical Details
+- **Backend**: Leverages existing `PricingManager` from `prompt_versioner.metrics.pricing`
+- **CLI Framework**: Built with Click for robust argument parsing and validation
+- **Output Formatting**: Rich library for beautiful terminal tables and panels
+- **Data Structure**: Default pricing dictionary with extensibility for custom models
+- **Currency**: EUR (Euro) pricing for all models
+- **Precision**: 6 decimal places for cost calculations to handle micro-costs accurately
+
+### Use Cases Enabled
+1. **Budget Planning**: Estimate monthly costs based on expected usage patterns
+2. **Model Selection**: Find the most cost-effective model for specific token patterns
+3. **Cost Optimization**: Compare providers and models to reduce expenses
+4. **Financial Reporting**: Export pricing data in JSON for analysis and reporting
+5. **Development**: Quick cost checks during prompt development and testing
+
 ## [0.2.5] - 2025-10-30
 
 ### Added
@@ -92,7 +173,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Performance monitoring and alerting
 - REST API endpoints
 
-[Unreleased]: https://github.com/pepes97/prompt-versioner/compare/v0.2.5...HEAD
+[Unreleased]: https://github.com/pepes97/prompt-versioner/compare/v0.2.6...HEAD
+[0.2.6]: https://github.com/pepes97/prompt-versioner/compare/v0.2.5...v0.2.6
 [0.2.5]: https://github.com/pepes97/prompt-versioner/compare/v0.2.4...v0.2.5
 [0.2.4]: https://github.com/pepes97/prompt-versioner/compare/v0.1.0...v0.2.4
 [0.1.0]: https://github.com/pepes97/prompt-versioner/releases/tag/v0.1.0
