@@ -6,24 +6,24 @@ from typing import Dict, Optional
 # Model pricing per 1M tokens (input/output) in EUR
 DEFAULT_MODEL_PRICING = {
     # Claude models
-    "claude-opus-4-1": {"input": 13.80, "output": 69.00},
-    "claude-opus-4": {"input": 13.80, "output": 69.00},
-    "claude-sonnet-4-5": {"input": 5.06, "output": 23.00},
-    "claude-sonnet-4": {"input": 5.06, "output": 23.00},
-    "claude-haiku-4": {"input": 0.92, "output": 4.60},
+    "claude-opus-4-1": {"input": 12.80, "output": 64.89},
+    "claude-opus-4": {"input": 12.80, "output": 64.89},
+    "claude-sonnet-4-5": {"input": 2.60, "output": 12.98},
+    "claude-sonnet-4": {"input": 2.60, "output": 12.98},
+    "claude-haiku-4-5": {"input": 0.87, "output": 4.33},
     # Mistral models
-    "mistral-large-24-11": {"input": 1.84, "output": 5.52},
-    "mistral-medium-3": {"input": 0.37, "output": 1.84},
-    "mistral-small-3-1": {"input": 0.09, "output": 0.28},
+    "mistral-large-2411": {"input": 1.84, "output": 5.52},
+    "mistral-medium-2595": {"input": 0.35, "output": 1.73},
+    "mistral-small": {"input": 0.09, "output": 0.28},
     "mistral-nemo": {"input": 0.14, "output": 0.14},
     # OpenAI models
-    "gpt-5": {"input": 1.15, "output": 9.20},
-    "gpt-5-mini": {"input": 0.23, "output": 1.84},
-    "gpt-5-nano": {"input": 0.05, "output": 0.37},
-    "gpt-4-1": {"input": 0.92, "output": 3.68},
-    "gpt-4-1-mini": {"input": 0.18, "output": 0.73},
-    "gpt-4o": {"input": 1.15, "output": 4.60},
-    "gpt-4o-mini": {"input": 0.18, "output": 0.73},
+    "gpt-5": {"input": 1.08, "output": 8.58},
+    "gpt-5-mini": {"input": 0.22, "output": 1.72},
+    "gpt-5-nano": {"input": 0.05, "output": 0.35},
+    "gpt-4-1": {"input": 1.72, "output": 6.86},
+    "gpt-4-1-mini": {"input": 0.35, "output": 1.38},
+    "gpt-4o": {"input": 2.15, "output": 8.57},
+    "gpt-4o-mini": {"input": 0.13, "output": 0.52},
 }
 
 
