@@ -31,12 +31,19 @@ Prompt Versioner provides enterprise-grade prompt management with:
 
 ## ✨ Features
 
+<table>
+<tr>
+<td width="50%" valign="top">
+
 ### 🔧 Core Functionality
 - Automatic MAJOR/MINOR/PATCH versioning
 - Metrics tracking: tokens, latency, quality, cost
 - Multi-model performance comparison
 - Export & share prompt history
 - Optional Git integration
+
+</td>
+<td width="50%" valign="top">
 
 ### 🧪 Advanced Testing & Monitoring
 - A/B Testing framework
@@ -45,16 +52,28 @@ Prompt Versioner provides enterprise-grade prompt management with:
 - Live metrics dashboards
 - Custom alert thresholds
 
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
 ### 👥 Collaboration & Management
 - Team annotations and feedback
 - Version comparison & visual diff
 - Search & filtering by metadata, performance, and tags
+
+</td>
+<td width="50%" valign="top">
 
 ### 🎨 Modern Web Interface
 - Interactive dashboard with responsive layout
 - Dark/Light themes
 - Tab navigation for Prompts, Testing, Comparison, Alerts
 - Real-time updates
+
+</td>
+</tr>
+</table>
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/pepes97/prompt-versioner/main/docs/images/dashboard-overview.png" alt="Dashboard Overview">
@@ -83,7 +102,7 @@ from prompt_versioner import PromptVersioner, VersionBump
 
 pv = PromptVersioner(project_name="my-first-project", enable_git=False)
 pv.save_version(
-    name="assistant",
+    name="assistant-prompt",
     system_prompt="You are a helpful assistant.",
     user_prompt="Please answer the following question: {question}",
     bump_type=VersionBump.MAJOR
